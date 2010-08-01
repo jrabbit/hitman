@@ -25,14 +25,17 @@ def hitsquad():
     for name, feed in feeds.iteritems():
         put_a_hit_out(name)
 
-def growl():
+def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
         #growl proper
         pass
     elif platform.system() == 'Linux':
+        from subprocess import *
+        if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
+            #notify-send "Totem" "This is a superfluous notification"
+            os.system("notify-send \"Hitman\" \"%s\" " % text
         #Do an OSD-Notify
-        pass
     else:
         #Can I test for growl for windows?
         pass
@@ -69,7 +72,25 @@ def get_feeds():
     db = anydbm.open('feeds', 'c')
     return db
 
+def directory_check():
+    #Construct hitman_dir from os name
+    home = os.path.expanduser('~') 
+    if platform.system() == 'Linux':
+        hitman_dir = os.path.join(home, '.hitman')
+    elif platform.system() == 'Darwin':
+        hitman_dir = os.path.join(home, 'Library', 'Application Support', 'hitman')
+    elif platform.system() == 'Windows':
+        hitman_dir = os.path.join(os.environ['appdata'], 'hitman')
+    else:
+        hitman_dir = os.path.join(home, '.hitman')
+    if not os.path.isdir(hitman_dir):
+        os.mkdir(hitman_dir)
+        return 1
+    else:
+        return hitman_dir
+
 if __name__ == "__main__":
+    directory_check()
     if len(sys.argv) > 2:
         addfeed(sys.argv[1], sys.argv[2])
     hitsquad()
