@@ -9,7 +9,11 @@ from urlgrabber.grabber import URLGrabber
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feeds = get_feeds()
-    url = feeds[name] 
+    aliases = get_aliases()
+    if feeds[name]:
+        url = feeds[name]
+    elif aliases[name]:
+        url = feeds[aliases[name]]
     d = feedparser.parse(url)
     print d.feed.title
     if len(d.entries[0].enclosures):
@@ -33,16 +37,16 @@ def growl(text):
     elif platform.system() == 'Linux':
         from subprocess import *
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
+            #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
             os.system("notify-send \"Hitman\" \"%s\" " % text
-        #Do an OSD-Notify
     else:
         #Can I test for growl for windows?
         pass
 
 def download(url):
     """should do continues"""
-    db = anydbm.open('downloads', 'c')
+    db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     try:
         data = g.urlgrab(url)
@@ -54,25 +58,31 @@ def download(url):
     f.write(data)
     db[url] = 'Downloaded'
 
-def add_feed(url, name):
+def add_feed(url):
     """add to yaml config file or db"""
-    db = anydbm.open('feeds', 'c')
+    db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
+    name = feedparser.parse(url).feed.title
     db[name] = url
     db.close()
+    return name
 
 def alias_feed(name, alias):
     """write aliases to db"""
-    db = anydbm.open('aliases', 'c')
+    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
     db[alias] = name
     db.close()
 
+def get_aliases():
+    db = anydmb.open(os.path.join(directory(), 'aliases'), 'c')
+    return db
+    
 def get_feeds():
     """read out all feed information,
     return as a dictionary indexed by feed name proper"""
-    db = anydbm.open('feeds', 'c')
+    db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
     return db
 
-def directory_check():
+def directory():
     #Construct hitman_dir from os name
     home = os.path.expanduser('~') 
     if platform.system() == 'Linux':
@@ -85,12 +95,10 @@ def directory_check():
         hitman_dir = os.path.join(home, '.hitman')
     if not os.path.isdir(hitman_dir):
         os.mkdir(hitman_dir)
-        return 1
-    else:
-        return hitman_dir
+    return hitman_dir
 
 if __name__ == "__main__":
-    directory_check()
     if len(sys.argv) > 2:
-        addfeed(sys.argv[1], sys.argv[2])
+        print "Added your feed as %s" % str(addfeed(sys.argv[1]))
+    #TODO Subcommands, ghetto or not
     hitsquad()
