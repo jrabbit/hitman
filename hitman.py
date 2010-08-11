@@ -9,9 +9,9 @@ from urlgrabber.grabber import URLGrabber
 from subprocess import *
 try:
     import urlgrabber.progress 
-    #depends on termios... not avail on win32
 except ImportError:
     print "Windows lusers: Please fix your termios ANSI capability in your terminal"
+
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feeds = get_feeds()
@@ -22,12 +22,13 @@ def put_a_hit_out(name):
         url = feeds[aliases[name]]
     d = feedparser.parse(url)
     print d.feed.title
-    if len(d.entries[0].enclosures):
-        print d.entries[0].enclosures[0]
+    if d.entries[0].enclosures:
+        if verbose in get_settings():
+            print d.entries[0].enclosures[0]
         #print d.feed.updated_parsed // Doesn't work everywhere, may nest in try or use .headers['last-modified']
-    download(str(d.entries[0].enclosures[0]['href']))
-    growl("Mission Complete: %s downloaded" % d.feed.title)
-    print "Mission Complete: %s downloaded" % d.feed.title
+        download(str(d.entries[0].enclosures[0]['href']))
+        growl("Mission Complete: %s downloaded" % d.feed.title)
+        print "Mission Complete: %s downloaded" % d.feed.title
 
 def hitsquad():
     """"\'put a hit out\' on all known rss feeds"""
