@@ -6,6 +6,9 @@ import anydbm
 import urlparse
 from urlgrabber.grabber import URLGrabber
 import platform
+try:
+    import urlgrabber.progress 
+    #depends on termios... not avail on win32
 
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
@@ -52,10 +55,21 @@ def download(url):
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     print "Downloading %s" % url
     try:
-        save_name = urlparse.urlparse(url) 
-        os.system("wget -c %s" % url)
-        #TODO: add curl and try both
-        #data = g.urlgrab(url)
+        settings = get_settings()
+        save_name = urlparse.urlparse(url)
+        if settings['prefer_wget']:
+            os.system("wget -c %s" % url)
+        elif settings['prefer_curl']:
+            os.system("curl -C - -O -L %s" % url)
+        else:
+            if urlgrabber.progress:
+                prog = urlgrabber.progress.text_progress_meter()
+                g.urlgrab(url, progress_obj=prog)
+                #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
+            else:
+                g.urlgrab(url)
+                print "Sorry termios isn't supported by your OS for a progress meter"
+        #g.urlgrab(url, filename='%s' % save_name)
         # get jsut a file.ext
         #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
         #f.write(data)
@@ -86,6 +100,10 @@ def get_feeds():
     """read out all feed information,
     return as a dictionary indexed by feed name proper"""
     db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
+    return db
+
+def get_settings():
+    db = anydbm.open(os.path.join(directory(), 'settings'), 'c')
     return db
 
 def directory():
