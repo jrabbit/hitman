@@ -10,7 +10,8 @@ from subprocess import *
 try:
     import urlgrabber.progress 
     #depends on termios... not avail on win32
-
+except ImportError:
+    print "Windows lusers: Please fix your termios ANSI capability in your terminal"
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feeds = get_feeds()
@@ -24,7 +25,7 @@ def put_a_hit_out(name):
     if len(d.entries[0].enclosures):
         print d.entries[0].enclosures[0]
         #print d.feed.updated_parsed // Doesn't work everywhere, may nest in try or use .headers['last-modified']
-    download(str(d.entries[0].enclosures[0]['href']), str(name))
+    download(str(d.entries[0].enclosures[0]['href']))
     growl("Mission Complete: %s downloaded" % d.feed.title)
     print "Mission Complete: %s downloaded" % d.feed.title
 
@@ -49,14 +50,14 @@ def growl(text):
         pass
         #Can I test for growl for windows?
 
-def download(url, name):
+def download(url):
     """should do continues"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     print "Downloading %s" % url
     try:
         settings = get_settings()
-        save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
+        #save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
         if settings['prefer_wget']:
             os.system("wget -c %s" % url)
         elif settings['prefer_curl']:
@@ -121,13 +122,13 @@ def directory():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         print "Added your feed as %s" % str(add_feed(sys.argv[1]))
-    if sys.argv[1] == 'set':
-        if len(sys.argv) > 2:
-            name = sys.argv[2]
-            key = sys.argv[3]
-            get_settings()[name] = key
-        else:
-            pass
-            #give help page
+        if sys.argv[1] == 'set':
+            if len(sys.argv) > 2:
+                name = sys.argv[2]
+                key = sys.argv[3]
+                get_settings()[name] = key
+            else:
+                pass
+                #give help page
     #TODO Subcommands, ghetto or not
     hitsquad()
