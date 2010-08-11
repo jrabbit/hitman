@@ -1,11 +1,12 @@
 #Hitman. Or The Professional. (c) 2010 Jrabbit Under GPL v3 or later.
-import feedparser
 import sys
 import os
 import anydbm
 import urlparse
-from urlgrabber.grabber import URLGrabber
 import platform
+import feedparser
+from urlgrabber.grabber import URLGrabber
+from subprocess import *
 try:
     import urlgrabber.progress 
     #depends on termios... not avail on win32
@@ -23,7 +24,7 @@ def put_a_hit_out(name):
     if len(d.entries[0].enclosures):
         print d.entries[0].enclosures[0]
         #print d.feed.updated_parsed // Doesn't work everywhere, may nest in try or use .headers['last-modified']
-    download(str(d.entries[0].enclosures[0]['href']))
+    download(str(d.entries[0].enclosures[0]['href']), str(name))
     growl("Mission Complete: %s downloaded" % d.feed.title)
     print "Mission Complete: %s downloaded" % d.feed.title
 
@@ -39,7 +40,6 @@ def growl(text):
         #growl proper
         pass
     elif platform.system() == 'Linux':
-        from subprocess import *
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
@@ -49,14 +49,14 @@ def growl(text):
         pass
         #Can I test for growl for windows?
 
-def download(url):
+def download(url, name):
     """should do continues"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     print "Downloading %s" % url
     try:
         settings = get_settings()
-        save_name = urlparse.urlparse(url)
+        save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
         if settings['prefer_wget']:
             os.system("wget -c %s" % url)
         elif settings['prefer_curl']:
@@ -68,11 +68,8 @@ def download(url):
                 #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
             else:
                 g.urlgrab(url)
-                print "Sorry termios isn't supported by your OS for a progress meter"
         #g.urlgrab(url, filename='%s' % save_name)
-        # get jsut a file.ext
         #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
-        #f.write(data)
         db[url] = 'Downloaded'
     except:
         db[url] = 'Error'
@@ -124,5 +121,13 @@ def directory():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         print "Added your feed as %s" % str(add_feed(sys.argv[1]))
+    if sys.argv[1] == 'set':
+        if len(sys.argv) > 2:
+            name = sys.argv[2]
+            key = sys.argv[3]
+            get_settings()[name] = key
+        else:
+            pass
+            #give help page
     #TODO Subcommands, ghetto or not
     hitsquad()
