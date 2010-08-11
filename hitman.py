@@ -23,10 +23,14 @@ def put_a_hit_out(name):
     d = feedparser.parse(url)
     print d.feed.title
     if d.entries[0].enclosures:
-        if verbose in get_settings():
+        if 'verbose' in get_settings():
             print d.entries[0].enclosures[0]
         #print d.feed.updated_parsed // Doesn't work everywhere, may nest in try or use .headers['last-modified']
-        download(str(d.entries[0].enclosures[0]['href']))
+        url = str(d.entries[0].enclosures[0]['href'])
+        
+        if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
+            download()
+        
         growl("Mission Complete: %s downloaded" % d.feed.title)
         print "Mission Complete: %s downloaded" % d.feed.title
 
