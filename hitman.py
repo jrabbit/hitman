@@ -55,25 +55,26 @@ def download(url):
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     print "Downloading %s" % url
-    try:
-        settings = get_settings()
-        #save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
-        if settings['prefer_wget']:
+    # try:
+    settings = get_settings()
+    #save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
+    if 'prefer_wget' in settings:
             os.system("wget -c %s" % url)
-        elif settings['prefer_curl']:
+    elif 'prefer_curl' in settings:
             os.system("curl -C - -O -L %s" % url)
+    else:
+        if urlgrabber.progress:
+            prog = urlgrabber.progress.text_progress_meter()
+            g.urlgrab(url, progress_obj=prog)
+            #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
         else:
-            if urlgrabber.progress:
-                prog = urlgrabber.progress.text_progress_meter()
-                g.urlgrab(url, progress_obj=prog)
-                #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
-            else:
-                g.urlgrab(url)
-        #g.urlgrab(url, filename='%s' % save_name)
-        #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
-        db[url] = 'Downloaded'
-    except:
-        db[url] = 'Error'
+            g.urlgrab(url)
+    #g.urlgrab(url, filename='%s' % save_name)
+    #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
+    db[url] = 'Downloaded'
+    # except Exception as e:
+    #     print e
+    #     db[url] = 'Error'
     
 
 def add_feed(url):
@@ -125,8 +126,11 @@ if __name__ == "__main__":
         if sys.argv[1] == 'set':
             if len(sys.argv) > 2:
                 name = sys.argv[2]
-                key = sys.argv[3]
-                get_settings()[name] = key
+                value = sys.argv[3]
+                if value == '0':
+                    del get_settings()[name]
+                else:
+                    get_settings()[name] = key
             else:
                 pass
                 #give help page
