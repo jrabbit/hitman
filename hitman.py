@@ -5,6 +5,7 @@ import os
 import anydbm
 import urlparse
 from urlgrabber.grabber import URLGrabber
+import platform
 
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
@@ -18,9 +19,9 @@ def put_a_hit_out(name):
     print d.feed.title
     if len(d.entries[0].enclosures):
         print d.entries[0].enclosures[0]
-        print d.feed.updated_parsed
-    download(d.entries[0].enclosures[0])
-    growl("Mission Complete: %s downloaded") % d.feed.title
+        #print d.feed.updated_parsed // Doesn't work everywhere, may nest in try or use .headers['last-modified']
+    download(str(d.entries[0].enclosures[0]['href']))
+    growl("Mission Complete: %s downloaded" % d.feed.title)
     print "Mission Complete: %s downloaded" % d.feed.title
 
 def hitsquad():
@@ -39,29 +40,34 @@ def growl(text):
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
-            os.system("notify-send \"Hitman\" \"%s\" " % text
+            os.system("notify-send \"Hitman\" \"%s\" " % text)
+        
     else:
-        #Can I test for growl for windows?
         pass
+        #Can I test for growl for windows?
 
 def download(url):
     """should do continues"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
+    print "Downloading %s" % url
     try:
-        data = g.urlgrab(url)
+        save_name = urlparse.urlparse(url) 
+        os.system("wget -c %s" % url)
+        #TODO: add curl and try both
+        #data = g.urlgrab(url)
+        # get jsut a file.ext
+        #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
+        #f.write(data)
+        db[url] = 'Downloaded'
     except:
         db[url] = 'Error'
-    save_name = urlparse.urlparse(url) 
-    # get jsut a file.ext
-    f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
-    f.write(data)
-    db[url] = 'Downloaded'
+    
 
 def add_feed(url):
     """add to yaml config file or db"""
     db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
-    name = feedparser.parse(url).feed.title
+    name = str(feedparser.parse(url).feed.title)
     db[name] = url
     db.close()
     return name
@@ -73,7 +79,7 @@ def alias_feed(name, alias):
     db.close()
 
 def get_aliases():
-    db = anydmb.open(os.path.join(directory(), 'aliases'), 'c')
+    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
     return db
     
 def get_feeds():
@@ -98,7 +104,7 @@ def directory():
     return hitman_dir
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        print "Added your feed as %s" % str(addfeed(sys.argv[1]))
+    if len(sys.argv) > 1:
+        print "Added your feed as %s" % str(add_feed(sys.argv[1]))
     #TODO Subcommands, ghetto or not
     hitsquad()
