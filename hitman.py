@@ -29,7 +29,7 @@ def put_a_hit_out(name):
         url = str(d.entries[0].enclosures[0]['href'])
         
         if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
-            download()
+            download(url)
         
         growl("Mission Complete: %s downloaded" % d.feed.title)
         print "Mission Complete: %s downloaded" % d.feed.title
