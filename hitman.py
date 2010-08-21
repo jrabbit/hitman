@@ -29,7 +29,7 @@ def put_a_hit_out(name):
         url = str(d.entries[0].enclosures[0]['href'])
         
         if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
-            download(url)
+            download(url, name)
         
         growl("Mission Complete: %s downloaded" % d.feed.title)
         print "Mission Complete: %s downloaded" % d.feed.title
@@ -55,16 +55,19 @@ def growl(text):
         pass
         #Can I test for growl for windows?
 
-def download(url):
+def download(url, name):
     """should do continues"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple') #Donno if this is sane/works.
     print "Downloading %s" % url
     # try:
     settings = get_settings()
-    #save_name = os.path.join(settings['download_folder'], name , urlparse.urlparse(url))
+    
+    if 'dl' in settings:
+        save_name = os.path.join(settings['dl'], name)
+        os.chdir(save_name)
     if 'prefer_wget' in settings:
-            os.system("wget -c %s" % url)
+            os.system("wget -c %s" % url )
     elif 'prefer_curl' in settings:
             os.system("curl -C - -O -L %s" % url)
     else:
@@ -136,8 +139,11 @@ if __name__ == "__main__":
                     del get_settings()[name]
                 else:
                     get_settings()[name] = key
-            else:
-                pass
-                #give help page
+        elif sys.argv[1] == 'help':
+            helppage = open('help', 'r')
+            print helppage
+        else:
+            helppage = open('help', 'r')
+            print helppage
     #TODO Subcommands, ghetto or not
     hitsquad()
