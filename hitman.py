@@ -44,12 +44,13 @@ def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
         #growl proper
-        pass
+        if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
+            os.system("growlnotify -t Hitman -m %r" % text)
     elif platform.system() == 'Linux':
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
-            os.system("notify-send \"Hitman\" \"%s\" " % text)
+            os.system("notify-send \"Hitman\" \"%r\" " % text)
         
     else:
         pass
