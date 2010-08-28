@@ -5,7 +5,11 @@ import anydbm
 import urlparse
 import platform
 import feedparser
-from urlgrabber.grabber import URLGrabber
+try:
+    from urlgrabber.grabber import URLGrabber
+    
+except ImportError:
+    print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) installed."
 from subprocess import *
 try:
     import urlgrabber.progress 
@@ -45,12 +49,12 @@ def growl(text):
     if platform.system() == 'Darwin':
         #growl proper
         if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
-            os.system("growlnotify -t Hitman -m %r" % text)
+            os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
-            os.system("notify-send \"Hitman\" \"%r\" " % text)
+            os.system("notify-send \"Hitman\" \"%r\" " % str(text))
         
     else:
         pass
