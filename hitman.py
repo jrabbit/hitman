@@ -5,15 +5,17 @@ import anydbm
 import urlparse
 import platform
 import feedparser
+from subprocess import *
 try:
     from urlgrabber.grabber import URLGrabber
     
 except ImportError:
+    raise
     print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) installed."
-from subprocess import *
 try:
     import urlgrabber.progress 
 except ImportError:
+    raise
     print "Windows lusers: Please fix your termios ANSI capability in your terminal"
 
 def put_a_hit_out(name):
@@ -71,23 +73,22 @@ def download(url, name):
     if 'dl' in settings:
         save_name = os.path.join(settings['dl'], name)
         os.chdir(save_name)
-    if 'prefer_wget' in settings:
-            os.system("wget -c %s" % url )
-    elif 'prefer_curl' in settings:
-            os.system("curl -C - -O -L %s" % url)
-    else:
-        if urlgrabber.progress:
-            prog = urlgrabber.progress.text_progress_meter()
-            g.urlgrab(url, progress_obj=prog)
-            #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
+    try:
+        if 'prefer_wget' in settings:
+                os.system("wget -c %s" % url )
+        elif 'prefer_curl' in settings:
+                os.system("curl -C - -O -L %s" % url)
         else:
-            g.urlgrab(url)
-    #g.urlgrab(url, filename='%s' % save_name)
-    #f = open(os.path.join(dl_folder, feed_name, save_name), 'w')
-    db[url] = 'Downloaded'
-    # except Exception as e:
-    #     print e
-    #     db[url] = 'Error'
+            if urlgrabber.progress:
+                prog = urlgrabber.progress.text_progress_meter()
+                g.urlgrab(url, progress_obj=prog)
+                #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
+            else:
+                g.urlgrab(url)
+        db[url] = 'Downloaded'
+    except KeyboardInterrupt:
+        print "Downloads paused. They will resume on restart of hitman.py"
+        sys.exit()
     
 
 def add_feed(url):
