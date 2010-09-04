@@ -135,9 +135,11 @@ def directory():
     return hitman_dir
 
 if __name__ == "__main__":
+    cmd = sys.argv[1]
     if len(sys.argv) > 1:
-        print "Added your feed as %s" % str(add_feed(sys.argv[1]))
-        if sys.argv[1] == 'set':
+        if  sys.argv[1][-3:] == 'xml' or sys.argv[1][-4:] == 'atom' :
+            print "Added your feed as %s" % str(add_feed(sys.argv[1]))
+        if cmd == 'set':
             if len(sys.argv) > 2:
                 name = sys.argv[2]
                 value = sys.argv[3]
@@ -145,11 +147,17 @@ if __name__ == "__main__":
                     del get_settings()[name]
                 else:
                     get_settings()[name] = key
-        elif sys.argv[1] == 'help':
+        elif cmd == 'help':
             helppage = open('help', 'r')
-            print helppage
+            print helppage.read()
+        elif cmd == 'alias':
+            alias_feed(sys.argv[2], sys.argv[3])
+            #alias name alias
+        elif cmd == 'down':
+            if len(sys.argv) > 2:
+                 put_a_hit_out(sys.argv[2])
         else:
             helppage = open('help', 'r')
-            print helppage
-    #TODO Subcommands, ghetto or not
-    hitsquad()
+            print helppage.read()
+    else:
+        hitsquad()
