@@ -143,7 +143,7 @@ if __name__ == "__main__":
             if len(sys.argv) > 2:
                 name = sys.argv[2]
                 value = sys.argv[3]
-                if value == '0':
+                if value in ['0', 'false', 'no', 'off', 'False']:
                     del get_settings()[name]
                 else:
                     get_settings()[name] = key
