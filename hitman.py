@@ -6,6 +6,8 @@ import urlparse
 import platform
 import feedparser
 from subprocess import *
+from BeautifulSoup import BeautifulStoneSoup
+from urllib2 import urlopen
 try:
     from urlgrabber.grabber import URLGrabber
     
@@ -140,6 +142,22 @@ def export_opml():
     print """</opml>"""
     #end canto refrenced code
 
+def import_opml(url):
+    """Test if URL given is local, then open, parse out feed urls, add feeds, set text= to aliases and report success, list feeds added"""
+    try:
+        f = file(url).read()
+    except IOError:
+        f = urlopen(url).read()
+    soup = BeautifulStoneSoup(f)
+    links = soup.findAll('outline', type="rss" or "pie")
+    #links.append(soup.findAll('outline', type="pie"))
+    #print links
+    for link in links:
+        #print link
+        add_feed(link['xmlurl'])
+        print link['text']
+    
+
 def directory():
     #Construct hitman_dir from os name
     home = os.path.expanduser('~') 
@@ -156,8 +174,8 @@ def directory():
     return hitman_dir
 
 if __name__ == "__main__":
-    cmd = sys.argv[1]
     if len(sys.argv) > 1:
+        cmd = sys.argv[1]
         if  sys.argv[1][-3:] == 'xml' or sys.argv[1][-4:] == 'atom' :
             print "Added your feed as %s" % str(add_feed(sys.argv[1]))
         if cmd == 'set':
@@ -179,6 +197,9 @@ if __name__ == "__main__":
                  put_a_hit_out(sys.argv[2])
         elif cmd == 'export':
             export_opml()
+        elif cmd == 'import':
+            if len(sys.argv) > 2:
+                import_opml(sys.argv[2])
         else:
             helppage = open('help', 'r')
             print helppage.read()
