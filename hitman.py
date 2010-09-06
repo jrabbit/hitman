@@ -119,6 +119,27 @@ def get_settings():
     db = anydbm.open(os.path.join(directory(), 'settings'), 'c')
     return db
 
+def export_opml():
+    feeds = get_feeds()
+    # print feeds
+    #  for name in feeds:
+    #          print name
+    #          print feeds[name]
+    #Thanks to the canto project- used under the GPL
+    print """<opml version="1.0">"""
+    print """<body>"""
+    for name in feeds:
+        kind = feedparser.parse(feeds[name]).version
+        if kind[:4] == 'atom':
+            t = 'pie'
+        elif kind[:3] == 'rss':
+            t = 'rss'
+        print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
+                (name, feeds[name], "rss")
+    print """</body>"""
+    print """</opml>"""
+    #end canto refrenced code
+
 def directory():
     #Construct hitman_dir from os name
     home = os.path.expanduser('~') 
@@ -156,6 +177,8 @@ if __name__ == "__main__":
         elif cmd == 'down':
             if len(sys.argv) > 2:
                  put_a_hit_out(sys.argv[2])
+        elif cmd == 'export':
+            export_opml()
         else:
             helppage = open('help', 'r')
             print helppage.read()
