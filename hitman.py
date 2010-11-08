@@ -110,7 +110,7 @@ def del_feed(name):
     elif aliases[name]:
         proper_name= aliases[name]
     for k,v in aliases:
-        if v = proper_name:
+        if v == proper_name:
             del aliases[k]
     #deleted from aliases
     del feeds[proper_name]
@@ -137,6 +137,22 @@ def get_feeds():
 def get_settings():
     db = anydbm.open(os.path.join(directory(), 'settings'), 'c')
     return db
+
+def list_feeds():
+    """List all feeds in plain text and give their aliases"""
+    feeds = get_feeds()
+    aliases_db = get_aliases()
+    for feed in feeds:
+        name = feed
+        url = feeds[feed]
+        aliases = []
+        for k,v in aliases_db.items():
+            if v == name:
+                aliases.append(k)
+        if aliases:
+            print name, " : %s Aliases: %s" % (url,aliases)
+        else:
+            print  name, " : %s" % url
 
 def export_opml():
     feeds = get_feeds()
@@ -215,7 +231,9 @@ if __name__ == "__main__":
                  put_a_hit_out(sys.argv[2])
         elif cmd in ['rm','remove','delete','calloff','Remove','RM']:
              if len(sys.argv) > 2:
-                 
+                 delete_feed(sys.argv[2])
+        elif cmd == 'list':
+            list_feeds()
         elif cmd == 'export':
             export_opml()
         elif cmd == 'import':
