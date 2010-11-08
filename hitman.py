@@ -94,12 +94,29 @@ def download(url, name):
     
 
 def add_feed(url):
-    """add to yaml config file or db"""
+    """add to db"""
     db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
     name = str(feedparser.parse(url).feed.title)
     db[name] = url
     db.close()
     return name
+
+def del_feed(name):
+    """remove from database (and delete aliases)"""
+    aliases = get_aliases()
+    feeds = get_feeds()
+    if feeds[name]:
+        proper_name = feeds[name]
+    elif aliases[name]:
+        proper_name= aliases[name]
+    for k,v in aliases:
+        if v = proper_name:
+            del aliases[k]
+    #deleted from aliases
+    del feeds[proper_name]
+    #deleted from feeds db
+    feeds.close()
+    
 
 def alias_feed(name, alias):
     """write aliases to db"""
@@ -150,6 +167,7 @@ def import_opml(url):
         f = urlopen(url).read()
     soup = BeautifulStoneSoup(f)
     links = soup.findAll('outline', type="rss" or "pie")
+    #This is very slow, might cache this info on add
     #links.append(soup.findAll('outline', type="pie"))
     #print links
     for link in links:
@@ -195,6 +213,9 @@ if __name__ == "__main__":
         elif cmd == 'down':
             if len(sys.argv) > 2:
                  put_a_hit_out(sys.argv[2])
+        elif cmd in ['rm','remove','delete','calloff','Remove','RM']:
+             if len(sys.argv) > 2:
+                 
         elif cmd == 'export':
             export_opml()
         elif cmd == 'import':
