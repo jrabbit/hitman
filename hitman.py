@@ -40,9 +40,11 @@ def put_a_hit_out(name):
         
         if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
             download(url, name)
-        
-        growl("Mission Complete: %s downloaded" % d.feed.title)
-        print "Mission Complete: %s downloaded" % d.feed.title
+            growl("Mission Complete: %s downloaded" % d.feed.title)
+            print "Mission Complete: %s downloaded" % d.feed.title
+        else:
+            growl("Mission Aborted: %s already downloaded" % d.feed.title)
+            print "Mission Aborted: %s already downloaded" % d.feed.title
 
 def hitsquad():
     """"\'put a hit out\' on all known rss feeds"""
@@ -76,7 +78,10 @@ def download(url, name):
     
     if 'dl' in settings:
         save_name = os.path.join(settings['dl'], name)
-        os.chdir(save_name)
+        os.chdir(settings['dl'])
+    else:
+        dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+    #TODO: implement sane dir setting
     try:
         if 'prefer_wget' in settings:
                 os.system("wget -c %s" % url )
