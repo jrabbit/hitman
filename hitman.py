@@ -78,10 +78,11 @@ def download(url, name):
     
     if 'dl' in settings:
         save_name = os.path.join(settings['dl'], name)
-        os.chdir(settings['dl'])
+        dl_dir = settings['dl']
     else:
         dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-    #TODO: implement sane dir setting
+    old_pwd = os.getcwd()
+    os.chdir(dl_dir)
     try:
         if 'prefer_wget' in settings:
                 os.system("wget -c %s" % url )
@@ -95,8 +96,13 @@ def download(url, name):
             else:
                 g.urlgrab(url)
         db[url] = 'Downloaded'
+        os.chdir(old_pwd)
     except KeyboardInterrupt:
         print "Downloads paused. They will resume on restart of hitman.py"
+        try:
+            os.chdir(old_pwd)
+        except:
+            print "Couldn't return to old pwd, sorry!"
         sys.exit()
     
 
@@ -200,7 +206,7 @@ def import_opml(url):
     
 
 def directory():
-    #Construct hitman_dir from os name
+    """Construct hitman_dir from os name"""
     home = os.path.expanduser('~') 
     if platform.system() == 'Linux':
         hitman_dir = os.path.join(home, '.hitman')
@@ -215,6 +221,7 @@ def directory():
     return hitman_dir
 
 if __name__ == "__main__":
+    #TODO Replace elifs with something easier to maintain
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
         if  sys.argv[1][-3:] == 'xml' or sys.argv[1][-4:] == 'atom' :
@@ -226,7 +233,7 @@ if __name__ == "__main__":
                 if value in ['0', 'false', 'no', 'off', 'False']:
                     del get_settings()[name]
                 else:
-                    get_settings()[name] = key
+                    get_settings()[name] = value
         elif cmd == 'help':
             helppage = open('help', 'r')
             print helppage.read()
