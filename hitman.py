@@ -6,10 +6,11 @@ import os
 import anydbm
 import urlparse
 import platform
-import feedparser
-from subprocess import *
-from BeautifulSoup import BeautifulStoneSoup
 from urllib2 import urlopen
+from subprocess import Popen
+
+import feedparser
+from BeautifulSoup import BeautifulStoneSoup
 try:
     from urlgrabber.grabber import URLGrabber
     
