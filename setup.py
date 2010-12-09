@@ -10,6 +10,6 @@ setup(
     py_modules = ['BeautifulSoup', 'feedparser'],
     scripts= ['hitman.py'],
     packages=['urlgrabber'],
-    requires=['pycurl'],
+    install_requires=['pycurl'],
     classifiers=['Environment :: Console', 'License :: OSI Approved :: GNU General Public License (GPL)', 'Topic :: Internet :: WWW/HTTP']
 )

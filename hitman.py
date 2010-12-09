@@ -7,7 +7,7 @@ import anydbm
 import urlparse
 import platform
 from urllib2 import urlopen
-from subprocess import Popen
+from subprocess import *
 
 import feedparser
 from BeautifulSoup import BeautifulStoneSoup
