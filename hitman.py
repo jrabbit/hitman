@@ -126,10 +126,10 @@ def del_feed(name):
     """remove from database (and delete aliases)"""
     aliases = get_aliases()
     feeds = get_feeds()
-    if feeds[name]:
-        proper_name = feeds[name]
-    elif aliases[name]:
+    if aliases[name]:
         proper_name = aliases[name]
+    elif feeds[name]:
+        proper_name = feeds[name]
     for k, v in aliases:
         if v == proper_name:
             del aliases[k]
@@ -189,6 +189,7 @@ def export_opml():
     #Thanks to the canto project- used under the GPL
     print """<opml version="1.0">"""
     print """<body>"""
+    #Accurate but slow.
     for name in feeds:
         kind = feedparser.parse(feeds[name]).version
         if kind[:4] == 'atom':
