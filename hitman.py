@@ -29,10 +29,10 @@ def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feeds = get_feeds()
     aliases = get_aliases()
-    if feeds[name]:
-        url = feeds[name]
-    elif aliases[name]:
+    if aliases[name]:
         url = feeds[aliases[name]]
+    elif feeds[name]:
+        url = feeds[name]
     d = feedparser.parse(url)
     print d.feed.title
     if d.entries[0].enclosures:
@@ -61,7 +61,7 @@ def hitsquad():
 def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
-        #growl proper
+        #TODO: growl proper
         if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
             os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
@@ -86,22 +86,24 @@ def download(url, name):
         dl_dir = settings['dl']
     else:
         dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-    old_pwd = os.getcwd()
-    os.chdir(dl_dir)
     try:
         if 'prefer_wget' in settings:
-                os.system("wget -c %s" % url)
+                Popen(['wget', '-c', url], cwd=dl_dir, stout=PIPE).wait()
         elif 'prefer_curl' in settings:
-                os.system("curl -C - -O -L %s" % url)
+                Popen(['curl', '-C', '-', '-O', '-L', url], cwd=dl_dir, stout=PIPE).wait()
         else:
+            old_pwd = os.getcwd()
+            os.chdir(dl_dir)
+            # TODO: fidn urlgrabber equiv to pwd
             if urlgrabber.progress:
                 prog = urlgrabber.progress.text_progress_meter()
                 g.urlgrab(url, progress_obj=prog)
+                os.chdir(old_pwd)
 #Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
             else:
                 g.urlgrab(url)
+                os.chdir(old_pwd)
         db[url] = 'Downloaded'
-        os.chdir(old_pwd)
     except KeyboardInterrupt:
         print "Downloads paused. They will resume on restart of hitman.py"
         try:
