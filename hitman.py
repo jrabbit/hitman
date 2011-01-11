@@ -40,6 +40,9 @@ def put_a_hit_out(name):
         feed = feeds[aliases[name]]
     elif name in feeds:
         feed = feeds[name]
+    else:
+        print "Cannot find feed named: %s" % name
+        return
     d = feedparser.parse(feed)
     print d.feed.title
     if d.entries[0].enclosures:
@@ -49,7 +52,7 @@ def put_a_hit_out(name):
         # Doesn't work everywhere, may nest in try or
         # use .headers['last-modified']
         url = str(d.entries[0].enclosures[0]['href'])
-        if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
+        if url.split('/')[-1] not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
             download(url, name, feed)
             growl("Mission Complete: %s downloaded" % d.feed.title)
             print "Mission Complete: %s downloaded" % d.feed.title
