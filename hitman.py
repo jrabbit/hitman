@@ -8,6 +8,7 @@ import urlparse
 import platform
 from urllib2 import urlopen
 from subprocess import *
+import json
 
 import feedparser
 from BeautifulSoup import BeautifulStoneSoup
@@ -17,6 +18,11 @@ except ImportError:
     raise
     print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) \
     installed."
+try:
+    import gntp
+except ImportError:
+    gntp = None
+    pass
 try:
     import urlgrabber.progress
 except ImportError:
@@ -30,10 +36,10 @@ def put_a_hit_out(name):
     feeds = get_feeds()
     aliases = get_aliases()
     if aliases[name]:
-        url = feeds[aliases[name]]
+        feed = feeds[aliases[name]]
     elif feeds[name]:
-        url = feeds[name]
-    d = feedparser.parse(url)
+        feed = feeds[name]
+    d = feedparser.parse(feed)
     print d.feed.title
     if d.entries[0].enclosures:
         if 'verbose' in get_settings():
@@ -43,7 +49,7 @@ def put_a_hit_out(name):
         # use .headers['last-modified']
         url = str(d.entries[0].enclosures[0]['href'])
         if url not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
-            download(url, name)
+            download(url, name, feed)
             growl("Mission Complete: %s downloaded" % d.feed.title)
             print "Mission Complete: %s downloaded" % d.feed.title
         else:
@@ -62,22 +68,26 @@ def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
         #TODO: growl proper
-        if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
+        if gntp:
+            pass
+        elif Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
             os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
             os.system("notify-send \"Hitman\" \"%r\" " % str(text))
+    elif platform.system() == 'Windows' and gntp:
+        pass
     else:
         pass
         #Can I test for growl for windows?
 
 
-def download(url, name):
+def download(url, name, feed):
     """should do continues"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
-    g = URLGrabber(reget='simple')  # Donno if this is sane/works.
+    g = URLGrabber(reget='simple')
     print "Downloading %s" % url
     # try:
     settings = get_settings()
@@ -103,7 +113,9 @@ def download(url, name):
             else:
                 g.urlgrab(url)
                 os.chdir(old_pwd)
-        db[url] = 'Downloaded'
+        #db[url]= 'Downloaded'
+        db[url.split('/')[-1]] = json.dumps({'url': url,
+        'date': time.ctime(), 'feed': feed})
     except KeyboardInterrupt:
         print "Downloads paused. They will resume on restart of hitman.py"
         try:
@@ -144,6 +156,11 @@ def alias_feed(name, alias):
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
     db[alias] = name
     db.close()
+
+
+def get_downloads():
+    db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
+    return db
 
 
 def get_aliases():
