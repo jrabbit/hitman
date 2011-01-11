@@ -35,9 +35,9 @@ def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feeds = get_feeds()
     aliases = get_aliases()
-    if aliases[name]:
+    if name in aliases:
         feed = feeds[aliases[name]]
-    elif feeds[name]:
+    elif name in feeds:
         feed = feeds[name]
     d = feedparser.parse(feed)
     print d.feed.title
