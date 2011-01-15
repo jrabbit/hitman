@@ -165,6 +165,10 @@ def del_alias(alias):
 def alias_feed(name, alias):
     """write aliases to db"""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
+    if db[name] == alias:
+        print "Something has gone horribly wrong with your aliases!\
+         Try deleting the %s entry." % name
+        return
     db[alias] = name
     db.close()
 
@@ -296,6 +300,9 @@ if __name__ == "__main__":
             list_feeds()
         elif cmd == 'export':
             export_opml()
+        elif cmd in ['delalias', 'rm-alias', 'unalias']:
+             if len(sys.argv) > 2:
+                 del_alias(sys.argv[2])
         elif cmd == 'import':
             if len(sys.argv) > 2:
                 import_opml(sys.argv[2])
