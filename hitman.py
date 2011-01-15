@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#Hitman. Or The Professional. (c) 2010 Jrabbit Under GPL v3 or later.
+#Hitman. Or The Professional. (c) 2010 - 2011 Jrabbit Under GPL v3 or later.
 import sys
 import os
 import anydbm
