@@ -155,6 +155,13 @@ def del_feed(name):
     feeds.close()
 
 
+def del_alias(alias):
+    """sometimes you goof up."""
+    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
+    print "removing alias of %s to %s" % alias, db.pop(alias)
+    db.close()
+
+
 def alias_feed(name, alias):
     """write aliases to db"""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
