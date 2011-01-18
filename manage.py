@@ -17,21 +17,21 @@ def is_file_latest(file, url):
 
 def clean_downloads():
     settings = hitman.get_settings()
-       if 'dl' in settings:
-           dl_dir = settings['dl']
-       else:
-           dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-       listing = os.listdir(dl_dir)
-       for localfile,data in  hitman.get_downloads().iteritems():
-           # db[localfile] = JSON obj {'url': url,
-           # 'date': time.ctime(), 'feed': feed_url}
-           if localfile in listing:
-               values = json.loads(data)
-               #check if file is the latest
-               if is_file_latest(localfile, values['feed']):
-                   pass
-               else:
-                   os.remove(os.path.join(dl_dir, localfile))    
+    if 'dl' in settings:
+       dl_dir = settings['dl']
+    else:
+       dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+    listing = os.listdir(dl_dir)
+    for localfile,data in  hitman.get_downloads().iteritems():
+       # db[localfile] = JSON obj {'url': url,
+       # 'date': time.ctime(), 'feed': feed_url}
+       if localfile in listing:
+           values = json.loads(data)
+           #check if file is the latest
+           if is_file_latest(localfile, values['feed']):
+               pass
+           else:
+               os.remove(os.path.join(dl_dir, localfile))    
 
 
 if __name__ == "__main__":
