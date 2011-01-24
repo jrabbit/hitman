@@ -253,6 +253,14 @@ def import_opml(url):
         print link['text']
 
 
+def is_feed(url):
+    d = feedparser.parse(url)
+    if d.bozo and d.bozo_exception:
+        return False
+    else:
+        return True
+
+
 def directory():
     """Construct hitman_dir from os name"""
     home = os.path.expanduser('~')
@@ -276,6 +284,8 @@ if __name__ == "__main__":
         cmd = sys.argv[1]
         if sys.argv[1][-3:] == 'xml' or sys.argv[1][-4:] == 'atom':
             print "Added your feed as %s" % str(add_feed(sys.argv[1]))
+        elif is_feed(sys.argv[1]):
+             print "Added your feed as %s" % str(add_feed(sys.argv[1]))
         if cmd == 'set':
             if len(sys.argv) > 2:
                 name = sys.argv[2]
