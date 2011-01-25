@@ -34,15 +34,7 @@ except ImportError:
 
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
-    feeds = get_feeds()
-    aliases = get_aliases()
-    if name in aliases:
-        feed = feeds[aliases[name]]
-    elif name in feeds:
-        feed = feeds[name]
-    else:
-        print "Cannot find feed named: %s" % name
-        return
+    feed = resolve_name(name)
     d = feedparser.parse(feed)
     print d.feed.title
     if d.entries[0].enclosures:
@@ -60,6 +52,32 @@ def put_a_hit_out(name):
             growl("Mission Aborted: %s already downloaded" % d.feed.title)
             print "Mission Aborted: %s already downloaded" % d.feed.title
 
+
+def selective_download(name, oldest, newest=0):
+    feed = resolve_name(name)
+    if not d.entries[1]:
+        print "Error: This feed does not list old items."
+        return
+    d = feedparser.parse(feed)
+    if not d.entries[range_higher]:
+        print "Error feed does not contain this many items."
+        print "Hitman thinks there are %d items in this feed." % len(d.entries)
+        return
+    for url in [q.enclosures[0]['href'] for q in d.entries[newest:oldest]]:
+        # iterate over urls in feed from newest to oldest feed items.
+        download(url, name, feed)
+
+def resolve_name(name):
+    """Takes a given input from a user and finds the url for it"""
+    feeds = get_feeds()
+    aliases = get_aliases()
+    if name in aliases:
+        return feeds[aliases[name]]
+    elif name in feeds:
+        return feeds[name]
+    else:
+        print "Cannot find feed named: %s" % name
+        return
 
 def hitsquad():
     "\'put a hit out\' on all known rss feeds"
@@ -89,7 +107,9 @@ def growl(text):
 
 
 def download(url, name, feed):
-    """should do continues"""
+    """url - the file to be downloaded
+    name - the name of the feed [TODO: remove]
+    feed - the feed url"""
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple')
     print "Downloading %s" % url
