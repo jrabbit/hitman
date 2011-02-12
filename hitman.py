@@ -20,11 +20,6 @@ except ImportError:
     print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) \
     installed."
 try:
-    import gntp
-except ImportError:
-    gntp = None
-    pass
-try:
     import urlgrabber.progress
 except ImportError:
     raise
@@ -90,9 +85,7 @@ def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
         #TODO: growl proper
-        if gntp:
-            pass
-        elif Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
+        if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
             os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
         if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
