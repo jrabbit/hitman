@@ -101,7 +101,7 @@ def growl(text):
             os.system("notify-send \"Hitman\" \"%r\" " % str(text))
     elif platform.system() == 'Haiku':
         os.system("notify --type information --app Hitman \
-        --title 'Status Report' %s" % str(text))
+        --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows' and gntp:
         pass
     else:
