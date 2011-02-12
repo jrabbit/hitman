@@ -99,6 +99,9 @@ def growl(text):
             #Do an OSD-Notify
             #notify-send "Totem" "This is a superfluous notification"
             os.system("notify-send \"Hitman\" \"%r\" " % str(text))
+    elif platform.system() == 'Haiku':
+        os.system("notify --type information --app Hitman \
+        --title 'Status Report' %s" % str(text))
     elif platform.system() == 'Windows' and gntp:
         pass
     else:

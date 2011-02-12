@@ -9,6 +9,7 @@ import hitman
 
 def is_file_latest(file, url):
     d = feedparser.parse(url)
+    # print d,url,file
     if d.entries[0].enclosures:
         if file == d.entries[0].enclosures[0]['href'].split('/')[-1]:
             return True
