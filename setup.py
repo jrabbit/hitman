@@ -1,4 +1,6 @@
-from distutils.core import setup
+from distribute_setup import use_setuptools
+use_setuptools()
+from setuptools import setup
 setup(
     name='hitman',
     version='1.0.1dev',
