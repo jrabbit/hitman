@@ -1,7 +1,9 @@
-from distutils.core import setup
+from distribute_setup import use_setuptools
+use_setuptools()
+from setuptools import setup
 setup(
     name='hitman',
-    version='1.0dev',
+    version='1.0.1dev',
     author='jrabbit',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
@@ -10,5 +12,6 @@ setup(
     scripts= ['hitman.py'],
     packages=['urlgrabber'],
     install_requires=['pycurl', 'feedparser', 'BeautifulSoup'],
-    classifiers=['Environment :: Console', 'License :: OSI Approved :: GNU General Public License (GPL)', 'Topic :: Internet :: WWW/HTTP']
+    classifiers=['Environment :: Console', 'License :: OSI Approved :: GNU General Public License (GPL)', 'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS','Topic :: Multimedia' ]
 )
+
