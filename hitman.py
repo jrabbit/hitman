@@ -333,7 +333,7 @@ if __name__ == "__main__":
             if len(sys.argv) > 2:
                 import_opml(sys.argv[2])
         else:
-            helppage = open('help', 'r')
-            print helppage.read()
+            #helppage = open('help', 'r')
+            #print helppage.read()
     else:
         hitsquad()
