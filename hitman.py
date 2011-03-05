@@ -335,5 +335,6 @@ if __name__ == "__main__":
         else:
             #helppage = open('help', 'r')
             #print helppage.read()
+            pass
     else:
         hitsquad()
