@@ -95,7 +95,7 @@ def growl(text):
     elif platform.system() == 'Haiku':
         os.system("notify --type information --app Hitman \
         --title 'Status Report' '%s'" % str(text))
-    elif platform.system() == 'Windows' and gntp:
+    elif platform.system() == 'Windows':
         pass
     else:
         pass
@@ -174,14 +174,14 @@ def del_feed(name):
 def del_alias(alias):
     """sometimes you goof up."""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
-    print "removing alias of %s to %s" % alias, db.pop(alias)
+    print "removing alias of %s to %s" % (alias, db.pop(alias))
     db.close()
 
 
 def alias_feed(name, alias):
     """write aliases to db"""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
-    if db[name] == alias:
+    if alias in db:
         print "Something has gone horribly wrong with your aliases!\
          Try deleting the %s entry." % name
         return
