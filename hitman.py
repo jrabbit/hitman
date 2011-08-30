@@ -11,6 +11,7 @@ from subprocess import *
 import json
 import time
 
+import baker
 import feedparser
 from BeautifulSoup import BeautifulStoneSoup
 try:
@@ -26,7 +27,7 @@ except ImportError:
     print "Windows lusers: Please fix your termios \
     ANSI capability in your terminal"
 
-
+@baker.command(name="down")
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feed = resolve_name(name)
@@ -74,6 +75,7 @@ def resolve_name(name):
         print "Cannot find feed named: %s" % name
         return
 
+@baker.command(default=True)
 def hitsquad():
     "\'put a hit out\' on all known rss feeds"
     feeds = get_feeds()
@@ -177,7 +179,7 @@ def del_alias(alias):
     print "removing alias of %s to %s" % (alias, db.pop(alias))
     db.close()
 
-
+@baker.command(name="alias")
 def alias_feed(name, alias):
     """write aliases to db"""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
@@ -210,7 +212,7 @@ def get_settings():
     db = anydbm.open(os.path.join(directory(), 'settings'), 'c')
     return db
 
-
+@baker.command(name="list")
 def list_feeds():
     """List all feeds in plain text and give their aliases"""
     feeds = get_feeds()
@@ -227,7 +229,7 @@ def list_feeds():
         else:
             print  name, " : %s" % url
 
-
+@baker.command(name="export")
 def export_opml():
     feeds = get_feeds()
     # print feeds
@@ -250,7 +252,7 @@ def export_opml():
     print """</opml>"""
     #end canto refrenced code
 
-
+@baker.command(name="import")
 def import_opml(url):
     """Test if URL given is local, then open, parse out feed urls,
     add feeds, set text= to aliases and report success, list feeds added"""
@@ -293,48 +295,33 @@ def directory():
         os.mkdir(hitman_dir)
     return hitman_dir
 
+@baker.command
+def add(url):
+    """"Add a atom or RSS feed by url. 
+    If it doesn't end in .atom or .rss we'll do some guessing."""
+    if url[-3:] == 'xml' or url[1][-4:] == 'atom':
+        print "Added your feed as %s" % str(add_feed(url))
+    elif is_feed(url):
+         print "Added your feed as %s" % str(add_feed(url))
+
+@baker.command(name="set")   
+def set_settings(key, value=False):
+    if value in ['0', 'false', 'no', 'off', 'False']:
+        del get_settings()[key]
+        print "Disabled setting"
+    else:
+        get_settings()[name] = value
+        print "Setting saved"
 
 if __name__ == "__main__":
     #TODO Replace elifs with something easier to maintain
     if len(sys.argv) > 1:
         cmd = sys.argv[1]
-        if sys.argv[1][-3:] == 'xml' or sys.argv[1][-4:] == 'atom':
-            print "Added your feed as %s" % str(add_feed(sys.argv[1]))
-        elif is_feed(sys.argv[1]):
-             print "Added your feed as %s" % str(add_feed(sys.argv[1]))
-        if cmd == 'set':
-            if len(sys.argv) > 2:
-                name = sys.argv[2]
-                value = sys.argv[3]
-                if value in ['0', 'false', 'no', 'off', 'False']:
-                    del get_settings()[name]
-                else:
-                    get_settings()[name] = value
-        elif cmd == 'help':
-            helppage = open('help', 'r')
-            print helppage.read()
-        elif cmd == 'alias':
-            alias_feed(sys.argv[2], sys.argv[3])
-            #alias name alias
-        elif cmd == 'down':
-            if len(sys.argv) > 2:
-                put_a_hit_out(sys.argv[2])
         elif cmd in ['rm', 'remove', 'delete', 'calloff', 'Remove', 'RM']:
             if len(sys.argv) > 2:
                 delete_feed(sys.argv[2])
-        elif cmd == 'list':
-            list_feeds()
-        elif cmd == 'export':
-            export_opml()
         elif cmd in ['delalias', 'rm-alias', 'unalias']:
              if len(sys.argv) > 2:
                  del_alias(sys.argv[2])
-        elif cmd == 'import':
-            if len(sys.argv) > 2:
-                import_opml(sys.argv[2])
-        else:
-            #helppage = open('help', 'r')
-            #print helppage.read()
-            pass
     else:
-        hitsquad()
+        pass
