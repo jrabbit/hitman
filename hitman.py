@@ -314,4 +314,7 @@ def set_settings(key, value=False):
         print "Setting saved"
 
 if __name__ == "__main__":
-    baker.run()
+    if len(sys.argv) > 1:
+        baker.run()
+    else:
+        hitsquad()
