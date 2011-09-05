@@ -155,7 +155,7 @@ def add_feed(url):
     db.close()
     return name
 
-
+@baker.command(name="rm")
 def del_feed(name):
     """remove from database (and delete aliases)"""
     aliases = get_aliases()
@@ -172,7 +172,7 @@ def del_feed(name):
     #deleted from feeds db
     feeds.close()
 
-
+@baker.command(name="unalias")
 def del_alias(alias):
     """sometimes you goof up."""
     db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
@@ -314,14 +314,4 @@ def set_settings(key, value=False):
         print "Setting saved"
 
 if __name__ == "__main__":
-    #TODO Replace elifs with something easier to maintain
-    if len(sys.argv) > 1:
-        cmd = sys.argv[1]
-        elif cmd in ['rm', 'remove', 'delete', 'calloff', 'Remove', 'RM']:
-            if len(sys.argv) > 2:
-                delete_feed(sys.argv[2])
-        elif cmd in ['delalias', 'rm-alias', 'unalias']:
-             if len(sys.argv) > 2:
-                 del_alias(sys.argv[2])
-    else:
-        pass
+    baker.run()
