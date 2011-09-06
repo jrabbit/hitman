@@ -64,7 +64,9 @@ def selective_download(name, oldest, newest=0):
         return
     for url in [q.enclosures[0]['href'] for q in d.entries[int(newest):int(oldest)]]:
         # iterate over urls in feed from newest to oldest feed items.
-        download(str(url), name, feed)
+        url = str(url)
+        if url.split('/')[-1] not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
+            download(url, name, feed)
 
 def resolve_name(name):
     """Takes a given input from a user and finds the url for it"""
