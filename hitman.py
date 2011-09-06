@@ -81,6 +81,8 @@ def hitsquad():
     feeds = get_feeds()
     for name, feed in feeds.iteritems():
         put_a_hit_out(name)
+    if len(feeds) == 0:
+        baker.usage()
 
 
 def growl(text):
