@@ -233,6 +233,7 @@ def list_feeds():
 
 @baker.command(name="export")
 def export_opml():
+    "Export an OPML feed list"
     feeds = get_feeds()
     # print feeds
     #  for name in feeds:
@@ -256,8 +257,9 @@ def export_opml():
 
 @baker.command(name="import")
 def import_opml(url):
-    """Test if URL given is local, then open, parse out feed urls,
-    add feeds, set text= to aliases and report success, list feeds added"""
+    """Import an OPML file locally or from a URL. Uses your text attributes as aliases."""
+    #Test if URL given is local, then open, parse out feed urls,
+    #add feeds, set text= to aliases and report success, list feeds added
     try:
         f = file(url).read()
     except IOError:
