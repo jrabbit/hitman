@@ -77,7 +77,7 @@ def resolve_name(name):
 
 @baker.command(default=True)
 def hitsquad():
-    "\'put a hit out\' on all known rss feeds"
+    "\'put a hit out\' on all known rss feeds [Default action without arguements]"
     feeds = get_feeds()
     for name, feed in feeds.iteritems():
         put_a_hit_out(name)
