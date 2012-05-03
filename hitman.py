@@ -10,6 +10,7 @@ from subprocess import *
 import json
 import time
 
+import gntplib
 import baker
 import feedparser
 try:
@@ -91,19 +92,29 @@ def hitsquad():
 def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
-        #TODO: growl proper
-        if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
-            os.system("growlnotify -t Hitman -m %r" % str(text))
+        gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+        # if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
+        #     os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
-        if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
-            #Do an OSD-Notify
-            #notify-send "Totem" "This is a superfluous notification"
-            os.system("notify-send \"Hitman\" \"%r\" " % str(text))
+        try: 
+            import pynotify
+            pynotify.init("Hitman")
+            n = pynotify.Notification("Hitman Status Report", text)
+            n.set_timeout(pynotify.EXPIRES_DEFAULT)
+            n.show()
+        except ImportError:
+            if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
+                #Do an OSD-Notify
+                #notify-send "Totem" "This is a superfluous notification"
+                os.system("notify-send \"Hitman\" \"%r\" " % str(text))
     elif platform.system() == 'Haiku':
         os.system("notify --type information --app Hitman \
         --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows':
-        pass
+        try:
+            gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+        except:
+            print "Install Growl For windows if you want notifications! \n http://www.growlforwindows.com/gfw/"
     else:
         pass
         #Can I test for growl for windows?
