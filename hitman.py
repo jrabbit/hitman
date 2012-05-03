@@ -13,7 +13,7 @@ import time
 
 import baker
 import feedparser
-from BeautifulSoup import BeautifulStoneSoup
+from bs4 import BeautifulSoup
 try:
     from urlgrabber.grabber import URLGrabber
 except ImportError:
@@ -269,11 +269,9 @@ def import_opml(url):
         f = file(url).read()
     except IOError:
         f = urlopen(url).read()
-    soup = BeautifulStoneSoup(f)
-    links = soup.findAll('outline', type="rss" or "pie")
+    soup = BeautifulSoup(f, "xml")
+    links = soup.find_all('outline', type="rss" or "pie")
     #This is very slow, might cache this info on add
-    #links.append(soup.findAll('outline', type="pie"))
-    #print links
     for link in links:
         #print link
         add_feed(link['xmlurl'])
