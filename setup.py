@@ -10,7 +10,7 @@ setup(
     description="The professional RSS enclosure downloader.",
     scripts= ['hitman.py'],
     packages=['urlgrabber'],
-    install_requires=['pycurl', 'feedparser', 'beautifulsoup4', 'baker>=1.1'],
+    install_requires=['pycurl', 'feedparser', 'beautifulsoup4', 'baker==1.1'],
     classifiers=['Environment :: Console', 'License :: OSI Approved :: GNU General Public License (GPL)', 'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS','Topic :: Multimedia' ]
 )
 
