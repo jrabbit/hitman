@@ -6,14 +6,12 @@ import os
 import anydbm
 import urlparse
 import platform
-from urllib2 import urlopen
 from subprocess import *
 import json
 import time
 
 import baker
 import feedparser
-from bs4 import BeautifulSoup
 try:
     from urlgrabber.grabber import URLGrabber
 except ImportError:
@@ -118,7 +116,6 @@ def download(url, name, feed):
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple')
     print "Downloading %s" % url
-    # try:
     settings = get_settings()
     if 'dl' in settings:
         save_name = os.path.join(settings['dl'], name)
@@ -142,7 +139,6 @@ def download(url, name, feed):
             else:
                 g.urlgrab(url)
                 os.chdir(old_pwd)
-        #db[url]= 'Downloaded'
         db[url.split('/')[-1]] = json.dumps({'url': url,
         'date': time.ctime(), 'feed': feed})
     except KeyboardInterrupt:
@@ -240,10 +236,6 @@ def list_feeds():
 def export_opml():
     "Export an OPML feed list"
     feeds = get_feeds()
-    # print feeds
-    #  for name in feeds:
-    #          print name
-    #          print feeds[name]
     #Thanks to the canto project- used under the GPL
     print """<opml version="1.0">"""
     print """<body>"""
@@ -265,6 +257,8 @@ def import_opml(url):
     """Import an OPML file locally or from a URL. Uses your text attributes as aliases."""
     #Test if URL given is local, then open, parse out feed urls,
     #add feeds, set text= to aliases and report success, list feeds added
+    from bs4 import BeautifulSoup
+    from urllib2 import urlopen
     try:
         f = file(url).read()
     except IOError:
