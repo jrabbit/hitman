@@ -1,0 +1,8 @@
+Baker==1.1
+argparse==1.2.1
+beautifulsoup4==4.3.2
+feedparser==5.1.3
+gntplib==0.5
+-e git+git@github.com:jrabbit/hitman.git@f36e30485bf2aea6bab1e6a1e05a0d405f44c204#egg=hitman-master
+pycurl==7.19.5.1
+wsgiref==0.1.2

@@ -13,6 +13,8 @@ import time
 import gntplib
 import baker
 import feedparser
+
+import requests
 try:
     from urlgrabber.grabber import URLGrabber
 except ImportError:

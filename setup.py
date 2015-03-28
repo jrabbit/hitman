@@ -1,12 +1,12 @@
 from setuptools import setup
 setup(
     name='hitman',
-    version='1.1',
+    version='1.2a',
     author='jrabbit',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
     license='GPL v3',
-    long_description="Hitman: The professional RSS enclosure downloader. Supports OPML. Supports various downloads methods: system wget, system curl, urlgrabber (pycurl based).",
+    long_description="Hitman: The professional RSS enclosure (Podcast) downloader. Supports OPML. Supports various downloads methods: system wget, system curl, urlgrabber (pycurl based).",
     description="The professional RSS enclosure downloader.",
     scripts= ['hitman.py'],
     packages=['urlgrabber'],
