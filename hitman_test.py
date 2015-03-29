@@ -21,3 +21,20 @@ class TestDatabase(unittest.TestCase):
     def tearDown(self):
         self.mydb.db.clear()
         self.mydb.db.close()
+
+class TestOPML(unittest.TestCase):
+    outOPML ="""<opml version="1.0">
+<body>
+    <outline text="Democracy Now! Video" xmlUrl="http://www.democracynow.org/podcast-video.xml" type="rss" />
+</body>
+</opml>
+"""
+    inOPML =""""""
+    def setUp(self):
+        pass
+    def test_export(self):
+        pass
+    def test_import(self):
+        pass
+    def tearDown(self):
+        pass

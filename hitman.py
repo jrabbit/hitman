@@ -214,14 +214,19 @@ def alias_feed(name, alias):
 
 
 class Database(object):
+
+    "Please use as a `with` context!"
+
     def __init__(self, name):
         super(Database, self).__init__()
         self.db = anydbm.open(os.path.join(directory(), name), 'c')
+
     def __enter__(self):
         return self.db
+
     def __exit__(self, *args):
         self.db.close()
-        
+
 
 def get_downloads():
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
