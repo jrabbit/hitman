@@ -165,11 +165,10 @@ def download(url, name, feed):
 
 def add_feed(url):
     """add to db"""
-    db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
-    name = str(feedparser.parse(url).feed.title)
-    db[name] = url
-    db.close()
-    return name
+    with Database("feeds") as db:
+        name = str(feedparser.parse(url).feed.title)
+        db[name] = url
+        return name
 
 
 @baker.command(name="rm")
@@ -193,21 +192,26 @@ def del_feed(name):
 @baker.command(name="unalias")
 def del_alias(alias):
     """sometimes you goof up."""
-    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
-    print "removing alias of %s to %s" % (alias, db.pop(alias))
-    db.close()
+    with Database("aliases") as mydb:
+        try:
+            print "removing alias of %s to %s" % (alias, mydb.pop(alias))
+        except KeyError:
+            print "No such alias key"
+            print "Check alias db:"
+            print mydb
 
 
 @baker.command(name="alias")
 def alias_feed(name, alias):
     """write aliases to db"""
-    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
-    if alias in db:
-        print "Something has gone horribly wrong with your aliases!\
-         Try deleting the %s entry." % name
-        return
-    db[alias] = name
-    db.close()
+    with Database("aliases") as db:
+        if alias in db:
+            print "Something has gone horribly wrong with your aliases!\
+             Try deleting the %s entry." % name
+            return
+        else:
+            db[alias] = name
+
 
 class Database(object):
     def __init__(self, name):

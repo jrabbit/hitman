@@ -13,6 +13,7 @@ setup(
     classifiers=['Environment :: Console', 
     'License :: OSI Approved :: GNU General Public License v3 (GPLv3)', 
     'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
-    'Topic :: Multimedia', 'Operating System :: OS Independent', 'Programming Language :: Python :: 2 :: Only' ]
+    'Topic :: Multimedia', 'Operating System :: OS Independent', 'Programming Language :: Python :: 2 :: Only',
+    'Programming Language :: Python :: 2.6', 'Programming Language :: Python :: 2.7', ]
 )
 
