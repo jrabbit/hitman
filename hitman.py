@@ -213,7 +213,9 @@ class Database(object):
     def __init__(self, name):
         super(Database, self).__init__()
         self.db = anydbm.open(os.path.join(directory(), name), 'c')
-    def __exit__(self):
+    def __enter__(self):
+        return self.db
+    def __exit__(self, *args):
         self.db.close()
         
 
