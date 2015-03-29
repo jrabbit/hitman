@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Hitman. Or The Professional. (c) 2010 - 2011 Jrabbit Under GPL v3 or later.
+# Hitman. Or The Professional. (c) 2010 - 2011, 2015 Jrabbit Under GPL v3 or later.
 import sys
 import os
 import anydbm
@@ -209,6 +209,13 @@ def alias_feed(name, alias):
     db[alias] = name
     db.close()
 
+class Database(object):
+    def __init__(self, name):
+        super(Database, self).__init__()
+        self.db = anydbm.open(os.path.join(directory(), name), 'c')
+    def __exit__(self):
+        self.db.close()
+        
 
 def get_downloads():
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
