@@ -2,8 +2,7 @@ Hitman.
 =======
 The professional RSS enclosure downloader.
 -------------------------------------------
-![Downloads per month](https://img.shields.io/pypi/dm/Django.svg
- ) ![build status](https://api.travis-ci.org/jrabbit/hitman.svg) ![published version](https://img.shields.io/pypi/v/nine.svg)
+![Downloads per month](https://img.shields.io/pypi/dm/hitman.svg) ![build status](https://api.travis-ci.org/jrabbit/hitman.svg) ![published version](https://img.shields.io/pypi/v/hitman.svg)
 
 +   Should run on recent python (2.5+)
 +   Lets you reference feeds based on user defined aliases [ex: "trms", "maddow"]
