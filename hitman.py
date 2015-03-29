@@ -142,7 +142,7 @@ def download(url, name, feed):
     try:
         old_pwd = os.getcwd()
         os.chdir(dl_dir)
-        # TODO: fidn urlgrabber equiv to pwd
+        # TODO: find urlgrabber equiv to pwd
         if urlgrabber.progress:
             prog = urlgrabber.progress.text_progress_meter()
             g.urlgrab(url, progress_obj=prog)
