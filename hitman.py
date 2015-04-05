@@ -36,8 +36,10 @@ def put_a_hit_out(name):
     d = feedparser.parse(feed)
     print d.feed.title
     if d.entries[0].enclosures:
-        if 'verbose' in get_settings():
-            print d.entries[0].enclosures[0]
+        with Database("settings") as s:
+            if 'verbose' in s:
+                print d.entries[0].enclosures[0]
+
         # print d.feed.updated_parsed
         # Doesn't work everywhere, may nest in try or
         # use .headers['last-modified']
@@ -74,25 +76,24 @@ def selective_download(name, oldest, newest=0):
 
 def resolve_name(name):
     """Takes a given input from a user and finds the url for it"""
-    feeds = get_feeds()
-    aliases = get_aliases()
-    if name in aliases:
-        return feeds[aliases[name]]
-    elif name in feeds:
-        return feeds[name]
-    else:
-        print "Cannot find feed named: %s" % name
-        return
+    with Database("feeds") as feeds, Database("aliases") as aliases:
+        if name in aliases:
+            return feeds[aliases[name]]
+        elif name in feeds:
+            return feeds[name]
+        else:
+            print "Cannot find feed named: %s" % name
+            return
 
 
 @baker.command(default=True)
 def hitsquad():
     "\'put a hit out\' on all known rss feeds [Default action without arguements]"
-    feeds = get_feeds()
-    for name, feed in feeds.iteritems():
-        put_a_hit_out(name)
-    if len(feeds) == 0:
-        baker.usage()
+    with Database("feeds") as feeds:
+        for name, feed in feeds.iteritems():
+            put_a_hit_out(name)
+        if len(feeds) == 0:
+            baker.usage()
 
 
 def growl(text):
@@ -174,19 +175,17 @@ def add_feed(url):
 @baker.command(name="rm")
 def del_feed(name):
     """remove from database (and delete aliases)"""
-    aliases = get_aliases()
-    feeds = get_feeds()
-    if aliases[name]:
-        proper_name = aliases[name]
-    elif feeds[name]:
-        proper_name = feeds[name]
-    for k, v in aliases:
-        if v == proper_name:
-            del aliases[k]
-    # deleted from aliases
-    del feeds[proper_name]
-    # deleted from feeds db
-    feeds.close()
+    with Database("aliases") as aliases, Database("feeds") as feeds:
+        if aliases[name]:
+            proper_name = aliases[name]
+        elif feeds[name]:
+            proper_name = feeds[name]
+        for k, v in aliases:
+            if v == proper_name:
+                del aliases[k]
+        # deleted from aliases
+        del feeds[proper_name]
+        # deleted from feeds db
 
 
 @baker.command(name="unalias")
@@ -253,40 +252,39 @@ def get_settings():
 @baker.command(name="list")
 def list_feeds():
     """List all feeds in plain text and give their aliases"""
-    feeds = get_feeds()
-    aliases_db = get_aliases()
-    for feed in feeds:
-        name = feed
-        url = feeds[feed]
-        aliases = []
-        for k, v in aliases_db.items():
-            if v == name:
-                aliases.append(k)
-        if aliases:
-            print name, " : %s Aliases: %s" % (url, aliases)
-        else:
-            print name, " : %s" % url
+    with Database("feeds") as feeds, Database("aliases") as aliases_db:
+        for feed in feeds:
+            name = feed
+            url = feeds[feed]
+            aliases = []
+            for k, v in aliases_db.items():
+                if v == name:
+                    aliases.append(k)
+            if aliases:
+                print name, " : %s Aliases: %s" % (url, aliases)
+            else:
+                print name, " : %s" % url
 
 
 @baker.command(name="export")
 def export_opml():
     "Export an OPML feed list"
-    feeds = get_feeds()
-    # Thanks to the canto project- used under the GPL
-    print """<opml version="1.0">"""
-    print """<body>"""
-    # Accurate but slow.
-    for name in feeds:
-        kind = feedparser.parse(feeds[name]).version
-        if kind[:4] == 'atom':
-            t = 'pie'
-        elif kind[:3] == 'rss':
-            t = 'rss'
-        print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
-            (name, feeds[name], "rss")
-    print """</body>"""
-    print """</opml>"""
-    # end canto refrenced code
+    with Database("feeds") as feeds:
+        # Thanks to the canto project- used under the GPL
+        print """<opml version="1.0">"""
+        print """<body>"""
+        # Accurate but slow.
+        for name in feeds:
+            kind = feedparser.parse(feeds[name]).version
+            if kind[:4] == 'atom':
+                t = 'pie'
+            elif kind[:3] == 'rss':
+                t = 'rss'
+            print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
+                (name, feeds[name], "rss")
+        print """</body>"""
+        print """</opml>"""
+        # end canto refrenced code
 
 
 @baker.command(name="import")
@@ -346,13 +344,14 @@ def add(url):
 
 @baker.command(name="set")
 def set_settings(key, value=False):
-    if value in ['0', 'false', 'no', 'off', 'False']:
-        del get_settings()[key]
-        print "Disabled setting"
-    else:
-        print value
-        get_settings()[key] = value
-        print "Setting saved"
+    with Database("settings") as settings:
+        if value in ['0', 'false', 'no', 'off', 'False']:
+            del settings[key]
+            print "Disabled setting"
+        else:
+            print value
+            settings[key] = value
+            print "Setting saved"
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
