@@ -263,7 +263,7 @@ def export_opml():
             elif kind[:3] == 'rss':
                 t = 'rss'
             print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
-                (name, feeds[name], "rss")
+                (name, feeds[name], t)
         print """</body>"""
         print """</opml>"""
         # end canto refrenced code
