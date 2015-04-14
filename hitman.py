@@ -134,12 +134,12 @@ def download(url, name, feed):
     db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple')
     print "Downloading %s" % url
-    settings = get_settings()
-    if 'dl' in settings:
-        save_name = os.path.join(settings['dl'], name)
-        dl_dir = settings['dl']
-    else:
-        dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+    with Database("settings") as settings:
+        if 'dl' in settings:
+            save_name = os.path.join(settings['dl'], name)
+            dl_dir = settings['dl']
+        else:
+            dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
     try:
         old_pwd = os.getcwd()
         os.chdir(dl_dir)
@@ -214,7 +214,7 @@ def alias_feed(name, alias):
 
 class Database(object):
 
-    "Please use as a `with` context!"
+    "Please use in a `with` context!"
 
     def __init__(self, name):
         super(Database, self).__init__()
@@ -225,28 +225,6 @@ class Database(object):
 
     def __exit__(self, *args):
         self.db.close()
-
-
-def get_downloads():
-    db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
-    return db
-
-
-def get_aliases():
-    db = anydbm.open(os.path.join(directory(), 'aliases'), 'c')
-    return db
-
-
-def get_feeds():
-    """read out all feed information,
-    return as a dictionary indexed by feed name proper"""
-    db = anydbm.open(os.path.join(directory(), 'feeds'), 'c')
-    return db
-
-
-def get_settings():
-    db = anydbm.open(os.path.join(directory(), 'settings'), 'c')
-    return db
 
 
 @baker.command(name="list")
