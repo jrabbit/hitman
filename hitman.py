@@ -44,13 +44,14 @@ def put_a_hit_out(name):
         # Doesn't work everywhere, may nest in try or
         # use .headers['last-modified']
         url = str(d.entries[0].enclosures[0]['href'])
-        if url.split('/')[-1] not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
-            download(url, name, feed)
-            growl("Mission Complete: %s downloaded" % d.feed.title)
-            print "Mission Complete: %s downloaded" % d.feed.title
-        else:
-            growl("Mission Aborted: %s already downloaded" % d.feed.title)
-            print "Mission Aborted: %s already downloaded" % d.feed.title
+        with Database("downloads") as db:
+            if url.split('/')[-1] not in db:
+                download(url, name, feed)
+                growl("Mission Complete: %s downloaded" % d.feed.title)
+                print "Mission Complete: %s downloaded" % d.feed.title
+            else:
+                growl("Mission Aborted: %s already downloaded" % d.feed.title)
+                print "Mission Aborted: %s already downloaded" % d.feed.title
 
 
 @baker.command(name="select")
@@ -70,8 +71,9 @@ def selective_download(name, oldest, newest=0):
     for url in [q.enclosures[0]['href'] for q in d.entries[int(newest):int(oldest)]]:
         # iterate over urls in feed from newest to oldest feed items.
         url = str(url)
-        if url.split('/')[-1] not in anydbm.open(os.path.join(directory(), 'downloads'), 'c'):
-            download(url, name, feed)
+        with Database("downloads") as db:
+            if url.split('/')[-1] not in db:
+                download(url, name, feed)
 
 
 def resolve_name(name):
@@ -131,7 +133,6 @@ def download(url, name, feed):
     """url - the file to be downloaded
     name - the name of the feed [TODO: remove]
     feed - the feed url"""
-    db = anydbm.open(os.path.join(directory(), 'downloads'), 'c')
     g = URLGrabber(reget='simple')
     print "Downloading %s" % url
     with Database("settings") as settings:
@@ -152,9 +153,10 @@ def download(url, name, feed):
         else:
             g.urlgrab(url)
             os.chdir(old_pwd)
+        with Database("downloads") as db:
+            db[url.split('/')[-1]] = json.dumps({'url': url,
+                                                 'date': time.ctime(), 'feed': feed})
 
-        db[url.split('/')[-1]] = json.dumps({'url': url,
-                                             'date': time.ctime(), 'feed': feed})
     except KeyboardInterrupt:
         print "Downloads paused. They will resume on restart of hitman.py"
         try:
