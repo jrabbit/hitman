@@ -1,6 +1,7 @@
 import unittest
 import tempfile
 import shutil
+import os
 
 from hitman import Database, requests_get
 
@@ -47,6 +48,8 @@ class TestDownloaders(unittest.TestCase):
     def test_requests_get(self):
         url = "https://httpbin.org/image/png"
         requests_get(url, self.dest)
+        f = os.path.join(self.dest, 'png')
+        self.assertTrue(os.path.exists(f))
     def test_requests_resume(self):
         pass
     def tearDown(self):
