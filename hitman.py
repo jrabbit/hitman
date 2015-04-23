@@ -17,6 +17,8 @@ import baker
 import feedparser
 
 import requests
+from clint.textui import progress
+
 try:
     from urlgrabber.grabber import URLGrabber
 except ImportError:
@@ -167,6 +169,23 @@ def download(url, name, feed):
             print "Couldn't return to old pwd, sorry!"
         sys.exit()
 
+
+def requests_get(url, dl_dir):
+    h = requests.head(url)
+    save = os.path.join(dl_dir ,url.split('/')[-1])
+    size = int(h.headers['content-length'])
+    if os.path.exists(save) and 'accept-ranges' in h.headers:
+    # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
+        pass
+    else:
+        with progress.Bar(label="Download", expected_size=size) as bar, open(save, 'wb') as f:
+            r = requests.get(url)
+            r.raise_for_status()
+            counter = 0
+            for chunk in r.iter_content(512):
+                f.write(chunk)
+                counter += len(chunk)
+                bar.show(counter)
 
 def add_feed(url):
     """add to db"""

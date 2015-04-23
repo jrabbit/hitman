@@ -1,6 +1,8 @@
 import unittest
+import tempfile
+import shutil
 
-from hitman import Database
+from hitman import Database, requests_get
 
 
 class TestDatabase(unittest.TestCase):
@@ -38,3 +40,15 @@ class TestOPML(unittest.TestCase):
         pass
     def tearDown(self):
         pass
+
+class TestDownloaders(unittest.TestCase):
+    def setUp(self):
+        self.dest = tempfile.mkdtemp()
+    def test_requests_get(self):
+        url = "https://httpbin.org/image/png"
+        requests_get(url, self.dest)
+    def test_requests_resume(self):
+        pass
+    def tearDown(self):
+        shutil.rmtree(self.dest)
+
