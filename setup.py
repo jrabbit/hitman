@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
     name='hitman',
     version='1.2a4',
-    author='jrabbit',
+    author='Jack Laxson',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
     license='GPL v3',
