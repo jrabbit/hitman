@@ -311,6 +311,8 @@ def import_opml(url):
 def is_feed(url):
     d = feedparser.parse(url)
     if d.bozo and d.bozo_exception:
+        print "feedparser has declared this feed a bozo:"
+        print d.bozo_exception
         return False
     else:
         return True
@@ -334,13 +336,17 @@ def directory():
 
 
 @baker.command
-def add(url):
+def add(url, force=False):
     """"Add a atom or RSS feed by url. 
     If it doesn't end in .atom or .rss we'll do some guessing."""
     if url[-3:] == 'xml' or url[1][-4:] == 'atom':
         print "Added your feed as %s" % str(add_feed(url))
     elif is_feed(url):
         print "Added your feed as %s" % str(add_feed(url))
+    elif force:
+        print "Added your feed as %s" % str(add_feed(url))
+    else:
+        print "Hitman doesn't think that url is a feed; if you're sure it is run with --force"
 
 
 @baker.command(name="set")
