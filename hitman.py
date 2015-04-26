@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Hitman. Or The Professional. 
+# Hitman. Or The Professional.
 # (c) 2010 - 2011, 2015 Jrabbit Under GPL v3 or later.
 
 import sys
@@ -172,10 +172,10 @@ def download(url, name, feed):
 
 def requests_get(url, dl_dir):
     h = requests.head(url)
-    save = os.path.join(dl_dir ,url.split('/')[-1])
+    save = os.path.join(dl_dir, url.split('/')[-1])
     size = int(h.headers['content-length'])
     if os.path.exists(save) and 'accept-ranges' in h.headers:
-    # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
+        # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
         pass
     else:
         with progress.Bar(label="Download", expected_size=size) as bar, open(save, 'wb') as f:
@@ -187,10 +187,12 @@ def requests_get(url, dl_dir):
                 counter += len(chunk)
                 bar.show(counter)
 
+
 def add_feed(url):
     """add to db"""
     with Database("feeds") as db:
-        name = str(feedparser.parse(url).feed.title)
+        title = feedparser.parse(url).feed.title
+        name = str(title)
         db[name] = url
         return name
 
@@ -346,7 +348,7 @@ def add(url, force=False):
     elif force:
         print "Added your feed as %s" % str(add_feed(url))
     else:
-        print "Hitman doesn't think that url is a feed; if you're sure it is run with --force"
+        print "Hitman doesn't think that url is a feed; if you're sure it is rerun with --force"
 
 
 @baker.command(name="set")
