@@ -296,18 +296,17 @@ def import_opml(url):
     # Test if URL given is local, then open, parse out feed urls,
     # add feeds, set text= to aliases and report success, list feeds added
     from bs4 import BeautifulSoup
-    from urllib2 import urlopen
     try:
         f = file(url).read()
     except IOError:
-        f = urlopen(url).read()
+        f = requests.get(url).text
     soup = BeautifulSoup(f, "xml")
     links = soup.find_all('outline', type="rss" or "pie")
     # This is very slow, might cache this info on add
     for link in links:
         # print link
-        add_feed(link['xmlurl'])
-        print link['text']
+        add_feed(link['xmlUrl'])
+        print("Added " + link['text'])
 
 
 def is_feed(url):
