@@ -19,18 +19,16 @@ import feedparser
 import requests
 from clint.textui import progress
 
-try:
-    from urlgrabber.grabber import URLGrabber
-except ImportError:
-    raise
-    print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) \
-    installed."
-try:
-    import urlgrabber.progress
-except ImportError:
-    raise
-    print "Windows lusers: Please fix your termios \
-    ANSI capability in your terminal"
+# try:
+#     from urlgrabber.grabber import URLGrabber
+# except ImportError as e:
+#     print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) \
+#     installed."
+# try:
+#     import urlgrabber.progress
+# except ImportError as e:
+#     print "Windows lusers: Please fix your termios \
+#     ANSI capability in your terminal"
 
 
 @baker.command(name="down")
@@ -50,7 +48,15 @@ def put_a_hit_out(name):
         url = str(d.entries[0].enclosures[0]['href'])
         with Database("downloads") as db:
             if url.split('/')[-1] not in db:
-                download(url, name, feed)
+                # download(url, name, feed)
+                with Database("settings") as settings:
+                    if 'dl' in settings:
+                        save_name = os.path.join(settings['dl'], name)
+                        dl_dir = settings['dl']
+                    else:
+                        dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+                requests_get(url, dl_dir)
+                db[url.split('/')[-1]] = json.dumps({'url': url, 'date': time.ctime(), 'feed': feed})
                 growl("Mission Complete: %s downloaded" % d.feed.title)
                 print "Mission Complete: %s downloaded" % d.feed.title
             else:
@@ -77,7 +83,14 @@ def selective_download(name, oldest, newest=0):
         url = str(url)
         with Database("downloads") as db:
             if url.split('/')[-1] not in db:
-                download(url, name, feed)
+                # download(url, name, feed)
+                with Database("settings") as settings:
+                    if 'dl' in settings:
+                        save_name = os.path.join(settings['dl'], name)
+                        dl_dir = settings['dl']
+                    else:
+                        dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+                requests_get(url, dl_dir)
 
 
 def resolve_name(name):
@@ -177,9 +190,11 @@ def requests_get(url, dl_dir):
     if os.path.exists(save) and 'accept-ranges' in h.headers:
         # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
         pass
+        print "Cowardly refusing to resume %s" % save
     else:
+        print "Downloading: %s" % url.split('/')[-1]
         with progress.Bar(label="Download", expected_size=size) as bar, open(save, 'wb') as f:
-            r = requests.get(url)
+            r = requests.get(url, stream=True)
             r.raise_for_status()
             counter = 0
             for chunk in r.iter_content(512):
