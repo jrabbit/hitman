@@ -12,23 +12,11 @@ from subprocess import *
 import json
 import time
 
-import gntplib
 import baker
 import feedparser
 
 import requests
 from clint.textui import progress
-
-# try:
-#     from urlgrabber.grabber import URLGrabber
-# except ImportError as e:
-#     print "It appears you do not have pycurl (http://pycurl.sourceforge.net/) \
-#     installed."
-# try:
-#     import urlgrabber.progress
-# except ImportError as e:
-#     print "Windows lusers: Please fix your termios \
-#     ANSI capability in your terminal"
 
 
 @baker.command(name="down")
@@ -118,27 +106,44 @@ def hitsquad():
 def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
-        gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+        # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+        print("GNTP lib was unpublished from pypi. We're working on notification center support. Pull requests welcome.")
         # if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
         #     os.system("growlnotify -t Hitman -m %r" % str(text))
     elif platform.system() == 'Linux':
+        notified = False
         try:
             import pynotify
             pynotify.init("Hitman")
             n = pynotify.Notification("Hitman Status Report", text)
             n.set_timeout(pynotify.EXPIRES_DEFAULT)
             n.show()
+            notified = True
         except ImportError:
+            print "trying to notify-send"
             if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
                 # Do an OSD-Notify
                 # notify-send "Totem" "This is a superfluous notification"
                 os.system("notify-send \"Hitman\" \"%r\" " % str(text))
+                notified = True
+        if not notified:
+            try:
+                from gi.repository import Notify
+                Notify.init("Hitman")
+                #TODO have Icon as third argument.
+                notification = Notify.Notification.new("Hitman", text)
+                notification.show()
+                Notify.uninit()
+                notified = True
+            except ImportError:
+                pass
     elif platform.system() == 'Haiku':
         os.system("notify --type information --app Hitman \
         --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows':
         try:
-            gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+            # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
+            print("Sorry Growl For Windows users. GNTPlib was pulled from pypi. We're not aware of compeditors to growl for windows at this time.")
         except:
             print "Install Growl For windows if you want notifications! \n http://www.growlforwindows.com/gfw/"
     else:
@@ -353,7 +358,7 @@ def directory():
 
 @baker.command
 def add(url, force=False):
-    """"Add a atom or RSS feed by url. 
+    """Add a atom or RSS feed by url. 
     If it doesn't end in .atom or .rss we'll do some guessing."""
     if url[-3:] == 'xml' or url[1][-4:] == 'atom':
         print "Added your feed as %s" % str(add_feed(url))
@@ -367,6 +372,7 @@ def add(url, force=False):
 
 @baker.command(name="set")
 def set_settings(key, value=False):
+    """Set Hitman internal settings."""
     with Database("settings") as settings:
         if value in ['0', 'false', 'no', 'off', 'False']:
             del settings[key]
@@ -375,6 +381,17 @@ def set_settings(key, value=False):
             print value
             settings[key] = value
             print "Setting saved"
+
+@baker.command(name="config")
+def get_settings(key):
+    "View Hitman internal settings. Use 'all' for all keys"
+    with Database("settings") as s:
+        if key is "all":
+            print s
+        else:
+            print "{} = {}".format(key, s[key])
+
+
 
 if __name__ == "__main__":
     baker.run()
