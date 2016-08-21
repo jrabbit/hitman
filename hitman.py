@@ -296,7 +296,7 @@ def export_opml():
         print """<opml version="1.0">"""
         print """<body>"""
         # Accurate but slow.
-        for name in feeds:
+        for name in feeds.keys():
             kind = feedparser.parse(feeds[name]).version
             if kind[:4] == 'atom':
                 t = 'pie'
