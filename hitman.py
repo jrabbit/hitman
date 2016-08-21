@@ -107,9 +107,12 @@ def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
         # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
-        print("GNTP lib was unpublished from pypi. We're working on notification center support. Pull requests welcome.")
+        # print("GNTP lib was unpublished from pypi. We're working on notification center support. Pull requests welcome.")
         # if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
         #     os.system("growlnotify -t Hitman -m %r" % str(text))
+        import pync
+        pync.Notifier.notify(text, title="Hitman")
+
     elif platform.system() == 'Linux':
         notified = False
         try:
