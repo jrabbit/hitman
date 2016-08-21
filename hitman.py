@@ -26,7 +26,7 @@ def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feed = resolve_name(name)
     d = feedparser.parse(feed)
-    (print d.feed.title)
+    print(d.feed.title)
     if d.entries[0].enclosures:
         with Database("settings") as s:
             if 'verbose' in s:
