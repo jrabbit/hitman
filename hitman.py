@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 # Hitman. Or The Professional.
-# (c) 2010 - 2011, 2015 Jrabbit Under GPL v3 or later.
+# (c) 2010 - 2011, 2015 - 2016 Jack Laxson <Jrabbit> 
+# Licensed under GPL v3 or later.
 
 import sys
 import os
 import anydbm
-import urlparse
 import platform
 from subprocess import *
 import json
@@ -36,10 +36,8 @@ def put_a_hit_out(name):
         url = str(d.entries[0].enclosures[0]['href'])
         with Database("downloads") as db:
             if url.split('/')[-1] not in db:
-                # download(url, name, feed)
                 with Database("settings") as settings:
                     if 'dl' in settings:
-                        save_name = os.path.join(settings['dl'], name)
                         dl_dir = settings['dl']
                     else:
                         dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
@@ -49,7 +47,7 @@ def put_a_hit_out(name):
                 print "Mission Complete: %s downloaded" % d.feed.title
             else:
                 growl("Mission Aborted: %s already downloaded" % d.feed.title)
-                print "Mission Aborted: %s already downloaded" % d.feed.title
+                print("Mission Aborted: %s already downloaded" % d.feed.title)
 
 
 @baker.command(name="select")
@@ -58,13 +56,13 @@ def selective_download(name, oldest, newest=0):
     feed = resolve_name(name)
     d = feedparser.parse(feed)
     if not d.entries[1]:
-        print "Error: This feed does not list old items."
+        print("Error: This feed does not list old items.")
         return
     try:
         d.entries[int(oldest)]
     except IndexError:
-        print "Error feed does not contain this many items."
-        print "Hitman thinks there are %d items in this feed." % len(d.entries)
+        print("Error feed does not contain this many items.")
+        print("Hitman thinks there are %d items in this feed." % len(d.entries))
         return
     for url in [q.enclosures[0]['href'] for q in d.entries[int(newest):int(oldest)]]:
         # iterate over urls in feed from newest to oldest feed items.
@@ -74,7 +72,6 @@ def selective_download(name, oldest, newest=0):
                 # download(url, name, feed)
                 with Database("settings") as settings:
                     if 'dl' in settings:
-                        save_name = os.path.join(settings['dl'], name)
                         dl_dir = settings['dl']
                     else:
                         dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
@@ -89,13 +86,13 @@ def resolve_name(name):
         elif name in feeds:
             return feeds[name]
         else:
-            print "Cannot find feed named: %s" % name
+            print("Cannot find feed named: %s" % name)
             return
 
 
 @baker.command(default=True)
 def hitsquad():
-    "\'put a hit out\' on all known rss feeds [Default action without arguements]"
+    "'put a hit out' on all known rss feeds [Default action without arguements]"
     with Database("feeds") as feeds:
         for name, feed in feeds.iteritems():
             put_a_hit_out(name)
@@ -138,54 +135,53 @@ def growl(text):
             except ImportError:
                 pass
     elif platform.system() == 'Haiku':
-        os.system("notify --type information --app Hitman \
-        --title 'Status Report' '%s'" % str(text))
+        os.system("notify --type information --app Hitman --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows':
         try:
             # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
             print("Sorry Growl For Windows users. GNTPlib was pulled from pypi. We're not aware of compeditors to growl for windows at this time.")
         except:
-            print "Install Growl For windows if you want notifications! \n http://www.growlforwindows.com/gfw/"
+            print("Install Growl For windows if you want notifications! \n http://www.growlforwindows.com/gfw/")
     else:
         pass
         # Can I test for growl for windows?
 
 
-def download(url, name, feed):
-    """url - the file to be downloaded
-    name - the name of the feed [TODO: remove]
-    feed - the feed url"""
-    g = URLGrabber(reget='simple')
-    print "Downloading %s" % url
-    with Database("settings") as settings:
-        if 'dl' in settings:
-            save_name = os.path.join(settings['dl'], name)
-            dl_dir = settings['dl']
-        else:
-            dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-    try:
-        old_pwd = os.getcwd()
-        os.chdir(dl_dir)
-        # TODO: find urlgrabber equiv to pwd
-        if urlgrabber.progress:
-            prog = urlgrabber.progress.text_progress_meter()
-            g.urlgrab(url, progress_obj=prog)
-            os.chdir(old_pwd)
-# Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
-        else:
-            g.urlgrab(url)
-            os.chdir(old_pwd)
-        with Database("downloads") as db:
-            db[url.split('/')[-1]] = json.dumps({'url': url,
-                                                 'date': time.ctime(), 'feed': feed})
+# def download(url, name, feed):
+#     """url - the file to be downloaded
+#     name - the name of the feed [TODO: remove]
+#     feed - the feed url"""
+#     g = URLGrabber(reget='simple')
+#     print "Downloading %s" % url
+#     with Database("settings") as settings:
+#         if 'dl' in settings:
+#             save_name = os.path.join(settings['dl'], name)
+#             dl_dir = settings['dl']
+#         else:
+#             dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+#     try:
+#         old_pwd = os.getcwd()
+#         os.chdir(dl_dir)
+#         # TODO: find urlgrabber equiv to pwd
+#         if urlgrabber.progress:
+#             prog = urlgrabber.progress.text_progress_meter()
+#             g.urlgrab(url, progress_obj=prog)
+#             os.chdir(old_pwd)
+#             # Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
+#         else:
+#             g.urlgrab(url)
+#             os.chdir(old_pwd)
+#         with Database("downloads") as db:
+#             db[url.split('/')[-1]] = json.dumps({'url': url,
+#                                                  'date': time.ctime(), 'feed': feed})
 
-    except KeyboardInterrupt:
-        print "Downloads paused. They will resume on restart of hitman.py"
-        try:
-            os.chdir(old_pwd)
-        except:
-            print "Couldn't return to old pwd, sorry!"
-        sys.exit()
+#     except KeyboardInterrupt:
+#         print "Downloads paused. They will resume on restart of hitman.py"
+#         try:
+#             os.chdir(old_pwd)
+#         except:
+#             print("Couldn't return to old pwd, sorry!")
+#         sys.exit()
 
 
 def requests_get(url, dl_dir):
@@ -195,7 +191,7 @@ def requests_get(url, dl_dir):
     if os.path.exists(save) and 'accept-ranges' in h.headers:
         # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
         pass
-        print "Cowardly refusing to resume %s" % save
+        print("Cowardly refusing to resume %s" % save)
     else:
         print "Downloading: %s" % url.split('/')[-1]
         with progress.Bar(label="Download", expected_size=size) as bar, open(save, 'wb') as f:
@@ -238,11 +234,11 @@ def del_alias(alias):
     """sometimes you goof up."""
     with Database("aliases") as mydb:
         try:
-            print "removing alias of %s to %s" % (alias, mydb.pop(alias))
+            print("removing alias of %s to %s" % (alias, mydb.pop(alias)))
         except KeyError:
-            print "No such alias key"
-            print "Check alias db:"
-            print mydb
+            print("No such alias key")
+            print("Check alias db:")
+            print(mydb)
 
 
 @baker.command(name="alias")
@@ -250,8 +246,7 @@ def alias_feed(name, alias):
     """write aliases to db"""
     with Database("aliases") as db:
         if alias in db:
-            print "Something has gone horribly wrong with your aliases!\
-             Try deleting the %s entry." % name
+            print("Something has gone horribly wrong with your aliases! Try deleting the %s entry." % name)
             return
         else:
             db[alias] = name

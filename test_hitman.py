@@ -3,8 +3,9 @@ import tempfile
 import shutil
 import os
 
-from hitman import Database, requests_get
+import mock
 
+from hitman import Database, requests_get, baker
 
 class TestDatabase(unittest.TestCase):
     d = {'data': 'value', 'cheese': 'many'}
@@ -41,6 +42,15 @@ class TestOPML(unittest.TestCase):
         pass
     def tearDown(self):
         pass
+
+class TestCalls(unittest.TestCase):
+    def test_main(self):
+        func = baker.test("s")
+        self.assertEqual(func, "hitsquad()")
+        
+    def test_main_args(self):
+        baker.test(['s', 'add'])
+
 
 class TestDownloaders(unittest.TestCase):
     def setUp(self):
