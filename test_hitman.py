@@ -12,7 +12,11 @@ class TestDatabase(unittest.TestCase):
 
     def setUp(self):
         self.mydb = Database("test")
-        self.mydb.db.update(self.d)
+        self.mydb.db['data'] = 'value'
+        self.mydb.db['cheese'] = 'many'
+        # self.mydb.db.update(self.d) # doesn't fucking work on travis
+        # option to use `semidbm`
+        # self.mydb.db.sync()
 
     def test_write(self):
         self.assertEqual(self.mydb.db, self.d)
