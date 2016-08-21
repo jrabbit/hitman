@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install pycurl coverage && pip install -r requirements.txt --use-mirrors
+install: pip install coverage && pip install -r requirements.txt --use-mirrors
 # command to run tests, e.g. python setup.py test
 script:  coverage run --source=hitman -m unittest discover
 after_success:
