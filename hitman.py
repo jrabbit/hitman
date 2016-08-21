@@ -4,7 +4,6 @@
 # (c) 2010 - 2011, 2015 - 2016 Jack Laxson <Jrabbit> 
 # Licensed under GPL v3 or later.
 
-import anydbm
 import json
 import logging
 import os
@@ -16,6 +15,8 @@ from subprocess import *
 import baker
 import feedparser
 import requests
+import semidbm
+
 from clint.textui import progress
 
 logger = logging.getLogger(__name__)
@@ -96,9 +97,9 @@ def resolve_name(name):
 def hitsquad():
     """'put a hit out' on all known rss feeds [Default action without arguements]"""
     with Database("feeds") as feeds:
-        for name, feed in feeds.iteritems():
+        for name, feed in zip(feeds.keys(), feeds.values()):
             put_a_hit_out(name)
-        if len(feeds) == 0:
+        if len(feeds.keys()) == 0:
             baker.usage()
 
 
@@ -262,7 +263,7 @@ class Database(object):
 
     def __init__(self, name):
         super(Database, self).__init__()
-        self.db = anydbm.open(os.path.join(directory(), name), 'c')
+        self.db = semidbm.open(os.path.join(directory(), name), 'c')
 
     def __enter__(self):
         return self.db
