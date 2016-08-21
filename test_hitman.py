@@ -4,6 +4,7 @@ import shutil
 import os
 
 import mock
+import pxml
 
 from hitman import Database, requests_get, baker
 
@@ -30,7 +31,7 @@ class TestDatabase(unittest.TestCase):
         self.mydb.db.clear()
         self.mydb.db.close()
 
-class TestOPML(unittest.TestCase):
+class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
     outOPML ="""<opml version="1.0">
 <body>
     <outline text="Democracy Now! Video" xmlUrl="http://www.democracynow.org/podcast-video.xml" type="rss" />
