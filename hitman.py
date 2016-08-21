@@ -4,19 +4,21 @@
 # (c) 2010 - 2011, 2015 - 2016 Jack Laxson <Jrabbit> 
 # Licensed under GPL v3 or later.
 
-import sys
-import os
 import anydbm
-import platform
-from subprocess import *
 import json
+import logging
+import os
+import platform
+import sys
 import time
+from subprocess import *
 
 import baker
 import feedparser
-
 import requests
 from clint.textui import progress
+
+logger = logging.getLogger(__name__)
 
 
 @baker.command(name="down")
@@ -24,11 +26,11 @@ def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
     feed = resolve_name(name)
     d = feedparser.parse(feed)
-    print d.feed.title
+    (print d.feed.title)
     if d.entries[0].enclosures:
         with Database("settings") as s:
             if 'verbose' in s:
-                print d.entries[0].enclosures[0]
+                print(d.entries[0].enclosures[0])
 
         # print d.feed.updated_parsed
         # Doesn't work everywhere, may nest in try or
@@ -52,7 +54,7 @@ def put_a_hit_out(name):
 
 @baker.command(name="select")
 def selective_download(name, oldest, newest=0):
-    "Note: RSS feeds are counted backwards, default newest is 0, the most recent."
+    """Note: RSS feeds are counted backwards, default newest is 0, the most recent."""
     feed = resolve_name(name)
     d = feedparser.parse(feed)
     if not d.entries[1]:
@@ -92,7 +94,7 @@ def resolve_name(name):
 
 @baker.command(default=True)
 def hitsquad():
-    "'put a hit out' on all known rss feeds [Default action without arguements]"
+    """'put a hit out' on all known rss feeds [Default action without arguements]"""
     with Database("feeds") as feeds:
         for name, feed in feeds.iteritems():
             put_a_hit_out(name)
@@ -110,6 +112,7 @@ def growl(text):
     elif platform.system() == 'Linux':
         notified = False
         try:
+            logger.debug("Trying to import pynotify")
             import pynotify
             pynotify.init("Hitman")
             n = pynotify.Notification("Hitman Status Report", text)
@@ -117,6 +120,7 @@ def growl(text):
             n.show()
             notified = True
         except ImportError:
+            logger.debug("Trying notify-send")
             print "trying to notify-send"
             if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
                 # Do an OSD-Notify
@@ -193,7 +197,7 @@ def requests_get(url, dl_dir):
         pass
         print("Cowardly refusing to resume %s" % save)
     else:
-        print "Downloading: %s" % url.split('/')[-1]
+        print("Downloading: %s" % url.split('/')[-1])
         with progress.Bar(label="Download", expected_size=size) as bar, open(save, 'wb') as f:
             r = requests.get(url, stream=True)
             r.raise_for_status()
@@ -254,7 +258,7 @@ def alias_feed(name, alias):
 
 class Database(object):
 
-    "Please use in a `with` context!"
+    """Please use in a `with` context!"""
 
     def __init__(self, name):
         super(Database, self).__init__()
@@ -286,7 +290,7 @@ def list_feeds():
 
 @baker.command(name="export")
 def export_opml():
-    "Export an OPML feed list"
+    """Export an OPML feed list"""
     with Database("feeds") as feeds:
         # Thanks to the canto project- used under the GPL
         print """<opml version="1.0">"""
@@ -379,7 +383,7 @@ def set_settings(key, value=False):
 
 @baker.command(name="config")
 def get_settings(key):
-    "View Hitman internal settings. Use 'all' for all keys"
+    """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
         if key is "all":
             print s
