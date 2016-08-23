@@ -319,7 +319,8 @@ def import_opml(url):
     # add feeds, set text= to aliases and report success, list feeds added
     from bs4 import BeautifulSoup
     try:
-        f = file(url).read()
+        with open(url) as opml_f:
+            f = opml_f.read()
     except IOError:
         f = requests.get(url).text
     soup = BeautifulSoup(f, "xml")
