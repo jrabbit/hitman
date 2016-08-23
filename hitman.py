@@ -283,7 +283,7 @@ def list_feeds():
             name = feed
             url = feeds[feed]
             aliases = []
-            for k, v in aliases_db.items():
+            for k, v in zip(aliases_db.keys(), aliases_db.values()):
                 if v == name:
                     aliases.append(k)
             if aliases:
