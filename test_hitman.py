@@ -49,13 +49,14 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
 """
     inOPML =""""""
 
-    @mock.patch('anydbm.open')
+    @mock.patch('semidbm.open')
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_export(self, patched_stdout, patched_dbm):
         our_d = ClosableDict()
         our_d["Democracy Now! Video"] = "http://www.democracynow.org/podcast-video.xml"
         patched_dbm.return_value = our_d
         export_opml()
+        patched_dbm.assert_called()
         out = patched_stdout.getvalue()
         self.assertXmlEqual(out, self.outOPML)
         # print(patched_stdout.getdata())
