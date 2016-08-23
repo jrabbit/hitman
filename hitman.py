@@ -198,7 +198,6 @@ def requests_get(url, dl_dir):
     size = int(h.headers['content-length'])
     if os.path.exists(save) and 'accept-ranges' in h.headers:
         # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
-        pass
         print("Cowardly refusing to resume %s" % save)
     else:
         print("Downloading: %s" % url.split('/')[-1])
@@ -225,10 +224,10 @@ def add_feed(url):
 def del_feed(name):
     """remove from database (and delete aliases)"""
     with Database("aliases") as aliases, Database("feeds") as feeds:
-        if aliases[name]:
+        if name in aliases:
             proper_name = aliases[name]
         elif feeds[name]:
-            proper_name = feeds[name]
+            proper_name = name
         for k, v in aliases:
             if v == proper_name:
                 del aliases[k]
@@ -389,8 +388,8 @@ def set_settings(key, value=False):
 def get_settings(key):
     """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
-        if key is "all":
-            print s
+        if key == "all":
+            print dict(s)
         else:
             print "{} = {}".format(key, s[key])
 
