@@ -47,7 +47,7 @@ def put_a_hit_out(name):
                 requests_get(url, dl_dir)
                 db[url.split('/')[-1]] = json.dumps({'url': url, 'date': time.ctime(), 'feed': feed})
                 growl("Mission Complete: %s downloaded" % d.feed.title)
-                print "Mission Complete: %s downloaded" % d.feed.title
+                print("Mission Complete: %s downloaded" % d.feed.title)
             else:
                 growl("Mission Aborted: %s already downloaded" % d.feed.title)
                 print("Mission Aborted: %s already downloaded" % d.feed.title)
@@ -125,7 +125,7 @@ def growl(text):
             notified = True
         except ImportError:
             logger.debug("Trying notify-send")
-            print "trying to notify-send"
+            print("trying to notify-send")
             if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
                 # Do an OSD-Notify
                 # notify-send "Totem" "This is a superfluous notification"
@@ -286,9 +286,9 @@ def list_feeds():
                 if v == name:
                     aliases.append(k)
             if aliases:
-                print name, " : %s Aliases: %s" % (url, aliases)
+                print(name, " : %s Aliases: %s" % (url, aliases))
             else:
-                print name, " : %s" % url
+                print(name, " : %s" % url)
 
 
 @baker.command(name="export")
@@ -296,8 +296,8 @@ def export_opml():
     """Export an OPML feed list"""
     with Database("feeds") as feeds:
         # Thanks to the canto project- used under the GPL
-        print """<opml version="1.0">"""
-        print """<body>"""
+        print("""<opml version="1.0">""")
+        print("""<body>""")
         # Accurate but slow.
         for name in feeds.keys():
             kind = feedparser.parse(feeds[name]).version
@@ -305,10 +305,10 @@ def export_opml():
                 t = 'pie'
             elif kind[:3] == 'rss':
                 t = 'rss'
-            print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
-                (name, feeds[name], t)
-        print """</body>"""
-        print """</opml>"""
+            print("""\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
+                (name, feeds[name], t))
+        print("""</body>""")
+        print("""</opml>""")
         # end canto refrenced code
 
 
@@ -335,8 +335,8 @@ def import_opml(url):
 def is_feed(url):
     d = feedparser.parse(url)
     if d.bozo and d.bozo_exception:
-        print "feedparser has declared this feed a bozo:"
-        print d.bozo_exception
+        print("feedparser has declared this feed a bozo:")
+        print(d.bozo_exception)
         return False
     else:
         return True
@@ -364,13 +364,13 @@ def add(url, force=False):
     """Add a atom or RSS feed by url. 
     If it doesn't end in .atom or .rss we'll do some guessing."""
     if url[-3:] == 'xml' or url[1][-4:] == 'atom':
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     elif is_feed(url):
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     elif force:
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     else:
-        print "Hitman doesn't think that url is a feed; if you're sure it is rerun with --force"
+        print("Hitman doesn't think that url is a feed; if you're sure it is rerun with --force")
 
 
 @baker.command(name="set")
@@ -379,20 +379,20 @@ def set_settings(key, value=False):
     with Database("settings") as settings:
         if value in ['0', 'false', 'no', 'off', 'False']:
             del settings[key]
-            print "Disabled setting"
+            print("Disabled setting")
         else:
-            print value
+            print(value)
             settings[key] = value
-            print "Setting saved"
+            print("Setting saved")
 
 @baker.command(name="config")
 def get_settings(key):
     """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
         if key == "all":
-            print dict(s)
+            print(dict(s))
         else:
-            print "{} = {}".format(key, s[key])
+            print("{} = {}".format(key, s[key]))
 
 
 
