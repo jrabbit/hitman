@@ -7,7 +7,7 @@ from StringIO import StringIO
 import mock
 import pxml
 
-from hitman import Database, requests_get, baker, export_opml, import_opml
+from hitman import Database, requests_get, baker, list_feeds, export_opml, import_opml
 
 # class TestDatabase(unittest.TestCase):
 #     d = {'data': 'value', 'cheese': 'many'}
@@ -68,6 +68,18 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
         import_opml(self.opml_file)
         patched_add.asser_called_once_with("http://www.democracynow.org/podcast.xml")
         self.assertEqual(patched_stdout.getvalue(), "Added Democracy Now! Audio\n")
+
+
+class TestList(unittest.TestCase):
+    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('semidbm.open')
+    def test_list(self, patched_dbm, patched_stdout):
+        our_d = ClosableDict()
+        our_d["Democracy Now! Video"] = "http://www.democracynow.org/podcast-video.xml"
+        patched_dbm.return_value = our_d
+        list_feeds()
+        out = patched_stdout.getvalue()
+        # print(out)
 
 class TestCalls(unittest.TestCase):
     def test_main(self):
