@@ -11,6 +11,8 @@ import platform
 import time
 from subprocess import *
 
+
+import six
 import baker
 import feedparser
 import requests
@@ -24,9 +26,14 @@ logger = logging.getLogger(__name__)
 @baker.command(name="down")
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
+
     feed = resolve_name(name)
+    if six.PY3:
+        feed = feed.decode()
     d = feedparser.parse(feed)
-    print(d.feed.title)
+    # logger.info(d)
+    # logger.info(feed)
+    print(d['feed']['title'])
     if d.entries[0].enclosures:
         with Database("settings") as s:
             if 'verbose' in s:
@@ -46,7 +53,7 @@ def put_a_hit_out(name):
                 requests_get(url, dl_dir)
                 db[url.split('/')[-1]] = json.dumps({'url': url, 'date': time.ctime(), 'feed': feed})
                 growl("Mission Complete: %s downloaded" % d.feed.title)
-                print "Mission Complete: %s downloaded" % d.feed.title
+                print("Mission Complete: %s downloaded" % d.feed.title)
             else:
                 growl("Mission Aborted: %s already downloaded" % d.feed.title)
                 print("Mission Aborted: %s already downloaded" % d.feed.title)
@@ -96,9 +103,9 @@ def resolve_name(name):
 def hitsquad():
     """'put a hit out' on all known rss feeds [Default action without arguements]"""
     with Database("feeds") as feeds:
-        for name, feed in zip(feeds.keys(), feeds.values()):
+        for name, feed in zip(list(feeds.keys()), list(feeds.values())):
             put_a_hit_out(name)
-        if len(feeds.keys()) == 0:
+        if len(list(feeds.keys())) == 0:
             baker.usage()
 
 
@@ -124,7 +131,7 @@ def growl(text):
             notified = True
         except ImportError:
             logger.debug("Trying notify-send")
-            print "trying to notify-send"
+            print("trying to notify-send")
             if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
                 # Do an OSD-Notify
                 # notify-send "Totem" "This is a superfluous notification"
@@ -285,13 +292,13 @@ def list_feeds():
             name = feed
             url = feeds[feed]
             aliases = []
-            for k, v in zip(aliases_db.keys(), aliases_db.values()):
+            for k, v in zip(list(aliases_db.keys()), list(aliases_db.values())):
                 if v == name:
                     aliases.append(k)
             if aliases:
-                print name, " : %s Aliases: %s" % (url, aliases)
+                print(name, " : %s Aliases: %s" % (url, aliases))
             else:
-                print name, " : %s" % url
+                print(name, " : %s" % url)
 
 
 @baker.command(name="export")
@@ -299,19 +306,19 @@ def export_opml():
     """Export an OPML feed list"""
     with Database("feeds") as feeds:
         # Thanks to the canto project- used under the GPL
-        print """<opml version="1.0">"""
-        print """<body>"""
+        print("""<opml version="1.0">""")
+        print("""<body>""")
         # Accurate but slow.
-        for name in feeds.keys():
+        for name in list(feeds.keys()):
             kind = feedparser.parse(feeds[name]).version
             if kind[:4] == 'atom':
                 t = 'pie'
             elif kind[:3] == 'rss':
                 t = 'rss'
-            print """\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
-                (name, feeds[name], t)
-        print """</body>"""
-        print """</opml>"""
+            print("""\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
+                (name, feeds[name], t))
+        print("""</body>""")
+        print("""</opml>""")
         # end canto refrenced code
 
 
@@ -337,8 +344,8 @@ def import_opml(url):
 def is_feed(url):
     d = feedparser.parse(url)
     if d.bozo and d.bozo_exception:
-        print "feedparser has declared this feed a bozo:"
-        print d.bozo_exception
+        print("feedparser has declared this feed a bozo:")
+        print(d.bozo_exception)
         return False
     else:
         return True
@@ -366,13 +373,13 @@ def add(url, force=False):
     """Add a atom or RSS feed by url.
     If it doesn't end in .atom or .rss we'll do some guessing."""
     if url[-3:] == 'xml' or url[1][-4:] == 'atom':
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     elif is_feed(url):
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     elif force:
-        print "Added your feed as %s" % str(add_feed(url))
+        print("Added your feed as %s" % str(add_feed(url)))
     else:
-        print "Hitman doesn't think that url is a feed; if you're sure it is rerun with --force"
+        print("Hitman doesn't think that url is a feed; if you're sure it is rerun with --force")
 
 
 @baker.command(name="set")
@@ -381,11 +388,11 @@ def set_settings(key, value=False):
     with Database("settings") as settings:
         if value in ['0', 'false', 'no', 'off', 'False']:
             del settings[key]
-            print "Disabled setting"
+            print("Disabled setting")
         else:
-            print value
+            print(value)
             settings[key] = value
-            print "Setting saved"
+            print("Setting saved")
 
 
 @baker.command(name="config")
@@ -393,9 +400,9 @@ def get_settings(key):
     """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
         if key is "all":
-            print s
+            print(s)
         else:
-            print "{} = {}".format(key, s[key])
+            print("{} = {}".format(key, s[key]))
 
 
 if __name__ == "__main__":
