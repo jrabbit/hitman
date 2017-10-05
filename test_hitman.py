@@ -49,7 +49,7 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
 """
     inOPML =""""""
 
-    @mock.patch('anydbm.open')
+    @mock.patch('semidbm.open')
     @mock.patch('sys.stdout', new_callable=StringIO)
     def test_export(self, patched_stdout, patched_dbm):
         our_d = ClosableDict()
