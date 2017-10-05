@@ -192,8 +192,10 @@ def growl(text):
 
 
 def requests_get(url, dl_dir):
-    h = requests.head(url)
+    logger.debug("Sending HEAD req to %s", url)
+    h = requests.head(url, allow_redirects=True)
     save = os.path.join(dl_dir, url.split('/')[-1])
+    logger.debug("headers: %s", h.headers)
     size = int(h.headers['content-length'])
     if os.path.exists(save) and 'accept-ranges' in h.headers:
         # http://stackoverflow.com/questions/12243997/how-to-pause-and-resume-download-work
@@ -396,4 +398,5 @@ def get_settings(key):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     baker.run()
