@@ -1,13 +1,13 @@
-import unittest
-import tempfile
-import shutil
 import os
-from StringIO import StringIO
+import shutil
+import tempfile
+import unittest
 
 import mock
 import pxml
+import six
+from hitman import Database, baker, export_opml, requests_get
 
-from hitman import Database, requests_get, baker, export_opml
 
 # class TestDatabase(unittest.TestCase):
 #     d = {'data': 'value', 'cheese': 'many'}
@@ -41,7 +41,7 @@ class ClosableDict(dict):
         pass
 
 class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
-    outOPML ="""<opml version="1.0">
+    outOPML =b"""<opml version="1.0">
 <body>
     <outline text="Democracy Now! Video" xmlUrl="http://www.democracynow.org/podcast-video.xml" type="rss" />
 </body>
@@ -50,13 +50,14 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
     inOPML =""""""
 
     @mock.patch('semidbm.open')
-    @mock.patch('sys.stdout', new_callable=StringIO)
+    @mock.patch('sys.stdout', new_callable=six.StringIO)
     def test_export(self, patched_stdout, patched_dbm):
         our_d = ClosableDict()
         our_d["Democracy Now! Video"] = "http://www.democracynow.org/podcast-video.xml"
         patched_dbm.return_value = our_d
         export_opml()
-        out = patched_stdout.getvalue()
+        out = patched_stdout.getvalue().encode("utf-8")
+
         self.assertXmlEqual(out, self.outOPML)
         # print(patched_stdout.getdata())
 
