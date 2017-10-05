@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
 # Hitman. Or The Professional.
-# (c) 2010 - 2011, 2015 - 2016 Jack Laxson <Jrabbit> 
+# (c) 2010 - 2011, 2015 - 2017 Jack Laxson <Jrabbit>
 # Licensed under GPL v3 or later.
 
 import json
 import logging
 import os
 import platform
-import sys
 import time
 from subprocess import *
 
@@ -135,7 +134,7 @@ def growl(text):
             try:
                 from gi.repository import Notify
                 Notify.init("Hitman")
-                #TODO have Icon as third argument.
+                # TODO have Icon as third argument.
                 notification = Notify.Notification.new("Hitman", text)
                 notification.show()
                 Notify.uninit()
@@ -361,7 +360,7 @@ def directory():
 
 @baker.command
 def add(url, force=False):
-    """Add a atom or RSS feed by url. 
+    """Add a atom or RSS feed by url.
     If it doesn't end in .atom or .rss we'll do some guessing."""
     if url[-3:] == 'xml' or url[1][-4:] == 'atom':
         print "Added your feed as %s" % str(add_feed(url))
@@ -385,6 +384,7 @@ def set_settings(key, value=False):
             settings[key] = value
             print "Setting saved"
 
+
 @baker.command(name="config")
 def get_settings(key):
     """View Hitman internal settings. Use 'all' for all keys"""
@@ -393,7 +393,6 @@ def get_settings(key):
             print s
         else:
             print "{} = {}".format(key, s[key])
-
 
 
 if __name__ == "__main__":
