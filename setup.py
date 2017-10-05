@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name='hitman',
-    version='1.2b2',
+    version='1.2b3',
     author='Jack Laxson',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
