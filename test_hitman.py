@@ -87,3 +87,7 @@ class TestDownloaders(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.dest)
 
+
+
+if __name__ == '__main__':
+    unittest.main()
