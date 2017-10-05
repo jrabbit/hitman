@@ -194,6 +194,7 @@ def growl(text):
 def requests_get(url, dl_dir):
     logger.debug("Sending HEAD req to %s", url)
     h = requests.head(url, allow_redirects=True)
+    h.raise_for_status()
     save = os.path.join(dl_dir, url.split('/')[-1])
     logger.debug("headers: %s", h.headers)
     size = int(h.headers['content-length'])
