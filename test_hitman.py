@@ -6,7 +6,8 @@ import unittest
 import mock
 import pxml
 import six
-from hitman import Database, baker, export_opml, requests_get
+from click.testing import CliRunner
+from hitman import Database, export_opml, requests_get
 
 
 # class TestDatabase(unittest.TestCase):
@@ -50,27 +51,25 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
     inOPML =""""""
 
     @mock.patch('semidbm.open')
-    @mock.patch('sys.stdout', new_callable=six.StringIO)
-    def test_export(self, patched_stdout, patched_dbm):
+    def test_export(self, patched_dbm):
         our_d = ClosableDict()
         our_d["Democracy Now! Video"] = "http://www.democracynow.org/podcast-video.xml"
         patched_dbm.return_value = our_d
-        export_opml()
-        out = patched_stdout.getvalue().encode("utf-8")
+        runner = CliRunner()
+        result = runner.invoke(export_opml)
 
-        self.assertXmlEqual(out, self.outOPML)
-        # print(patched_stdout.getdata())
+        self.assertXmlEqual(result.output, self.outOPML)
 
     def test_import(self):
         pass
 
-class TestCalls(unittest.TestCase):
-    def test_main(self):
-        func = baker.test()
-        self.assertEqual(func, "hitsquad()")
+# class TestCalls(unittest.TestCase):
+#     def test_main(self):
+#         func = baker.test()
+#         self.assertEqual(func, "hitsquad()")
         
-    def test_main_args(self):
-        baker.test(['s', 'add'])
+#     def test_main_args(self):
+#         baker.test(['s', 'add'])
 
 
 class TestDownloaders(unittest.TestCase):
