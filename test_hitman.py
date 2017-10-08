@@ -58,7 +58,7 @@ class TestOPML(unittest.TestCase, pxml.XmlTestMixin):
         runner = CliRunner()
         result = runner.invoke(export_opml)
 
-        self.assertXmlEqual(result.output, self.outOPML)
+        self.assertXmlEqual(result.output.encode("utf-8"), self.outOPML)
 
     def test_import(self):
         pass
