@@ -10,7 +10,11 @@ setup(
     description="The professional RSS enclosure (Podcast) downloader.",
     scripts=['hitman.py'],
     install_requires=['semidbm', 'requests', 'clint',
-                      'feedparser>=5.1.3', 'beautifulsoup4>=4.3.2', 'baker==1.3'],
+                      'feedparser>=5.1.3', 'beautifulsoup4>=4.3.2', 'click>=6'],
+    entry_points='''
+        [console_scripts]
+        hitman=hitman:cli_base
+    ''',
     classifiers=['Environment :: Console',
                  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                  'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
