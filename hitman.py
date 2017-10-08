@@ -83,11 +83,13 @@ def put_a_hit_out(name):
 @click.argument("name")
 def selective_download(name, oldest, newest):
     """Note: RSS feeds are counted backwards, default newest is 0, the most recent."""
+    if six.PY3:
+        name = name.encode("utf-8")
     feed = resolve_name(name)
+    if six.PY3:
+        feed = feed.decode()
     d = feedparser.parse(feed)
-    if not d.entries[1]:
-        print("Error: This feed does not list old items.")
-        return
+    logger.debug(d)
     try:
         d.entries[int(oldest)]
     except IndexError:
@@ -110,10 +112,11 @@ def selective_download(name, oldest, newest):
 
 def resolve_name(name):
     """Takes a given input from a user and finds the url for it"""
+    logger.debug("resolve_name: %s", name)
     with Database("feeds") as feeds, Database("aliases") as aliases:
-        if name in aliases:
+        if name in aliases.keys():
             return feeds[aliases[name]]
-        elif name in feeds:
+        elif name in feeds.keys():
             return feeds[name]
         else:
             print("Cannot find feed named: %s" % name)
@@ -127,7 +130,7 @@ def hitsquad(ctx):
             logger.debug("calling put_a_hit_out: %s", name)
             ctx.invoke(put_a_hit_out, name=name)
         if len(list(feeds.keys())) == 0:
-            baker.usage()
+            ctx.get_help()
 
 
 def growl(text):
