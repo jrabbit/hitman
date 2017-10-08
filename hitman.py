@@ -9,11 +9,12 @@ import logging
 import os
 import platform
 import time
-from subprocess import *
+from subprocess import Popen, PIPE
 
 
 import six
 import baker
+import click
 import feedparser
 import requests
 import semidbm
@@ -22,8 +23,25 @@ from clint.textui import progress
 
 logger = logging.getLogger(__name__)
 
+folder = click.get_app_dir("hitman")
 
-@baker.command(name="down")
+
+@click.group(invoke_without_command=True)
+@click.pass_context
+@click.option('--debug', default=False, is_flag=True)
+@click.option('--verbose/--silent', default=True)
+def cli_base(ctx, verbose, debug):
+    # only the first basicConfig() is respected.
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+    if verbose:
+        logging.basicConfig(level=logging.INFO)
+    if ctx.invoked_subcommand is None:
+        hitsquad(ctx)
+
+
+@cli_base.command("down")
+@click.argument("name")
 def put_a_hit_out(name):
     """Download a feeds most recent enclosure that we don't have"""
 
@@ -59,8 +77,11 @@ def put_a_hit_out(name):
                 print("Mission Aborted: %s already downloaded" % d.feed.title)
 
 
-@baker.command(name="select")
-def selective_download(name, oldest, newest=0):
+@cli_base.command("select")
+@click.argument("newest", default=0)
+@click.argument("oldest")
+@click.argument("name")
+def selective_download(name, oldest, newest):
     """Note: RSS feeds are counted backwards, default newest is 0, the most recent."""
     feed = resolve_name(name)
     d = feedparser.parse(feed)
@@ -99,12 +120,12 @@ def resolve_name(name):
             return
 
 
-@baker.command(default=True)
-def hitsquad():
+def hitsquad(ctx):
     """'put a hit out' on all known rss feeds [Default action without arguements]"""
     with Database("feeds") as feeds:
         for name, feed in zip(list(feeds.keys()), list(feeds.values())):
-            put_a_hit_out(name)
+            logger.debug("calling put_a_hit_out: %s", name)
+            ctx.invoke(put_a_hit_out, name=name)
         if len(list(feeds.keys())) == 0:
             baker.usage()
 
@@ -139,6 +160,9 @@ def growl(text):
                 notified = True
         if not notified:
             try:
+                logger.info("nortificatons gnome gi???")
+                import gi
+                gi.require_version('Notify', '0.7')
                 from gi.repository import Notify
                 Notify.init("Hitman")
                 # TODO have Icon as third argument.
@@ -159,43 +183,6 @@ def growl(text):
     else:
         pass
         # Can I test for growl for windows?
-
-
-# def download(url, name, feed):
-#     """url - the file to be downloaded
-#     name - the name of the feed [TODO: remove]
-#     feed - the feed url"""
-#     g = URLGrabber(reget='simple')
-#     print "Downloading %s" % url
-#     with Database("settings") as settings:
-#         if 'dl' in settings:
-#             save_name = os.path.join(settings['dl'], name)
-#             dl_dir = settings['dl']
-#         else:
-#             dl_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-#     try:
-#         old_pwd = os.getcwd()
-#         os.chdir(dl_dir)
-#         # TODO: find urlgrabber equiv to pwd
-#         if urlgrabber.progress:
-#             prog = urlgrabber.progress.text_progress_meter()
-#             g.urlgrab(url, progress_obj=prog)
-#             os.chdir(old_pwd)
-#             # Thanks http://thejuhyd.blogspot.com/2007/04/youtube-downloader-in-python.html
-#         else:
-#             g.urlgrab(url)
-#             os.chdir(old_pwd)
-#         with Database("downloads") as db:
-#             db[url.split('/')[-1]] = json.dumps({'url': url,
-#                                                  'date': time.ctime(), 'feed': feed})
-
-#     except KeyboardInterrupt:
-#         print "Downloads paused. They will resume on restart of hitman.py"
-#         try:
-#             os.chdir(old_pwd)
-#         except:
-#             print("Couldn't return to old pwd, sorry!")
-#         sys.exit()
 
 
 def requests_get(url, dl_dir):
@@ -230,7 +217,8 @@ def add_feed(url):
         return name
 
 
-@baker.command(name="rm")
+@cli_base.command("rm")
+@click.argument("name")
 def del_feed(name):
     """remove from database (and delete aliases)"""
     with Database("aliases") as aliases, Database("feeds") as feeds:
@@ -246,7 +234,8 @@ def del_feed(name):
         # deleted from feeds db
 
 
-@baker.command(name="unalias")
+@cli_base.command("unalias")
+@click.argument("alias")
 def del_alias(alias):
     """sometimes you goof up."""
     with Database("aliases") as mydb:
@@ -255,10 +244,12 @@ def del_alias(alias):
         except KeyError:
             print("No such alias key")
             print("Check alias db:")
-            print(mydb)
+            print(zip(list(mydb.keys()), list(mydb.values())))
 
 
-@baker.command(name="alias")
+@cli_base.command("alias")
+@click.argument("alias")
+@click.argument("name")
 def alias_feed(name, alias):
     """write aliases to db"""
     with Database("aliases") as db:
@@ -284,7 +275,7 @@ class Database(object):
         self.db.close()
 
 
-@baker.command(name="list")
+@cli_base.command("list")
 def list_feeds():
     """List all feeds in plain text and give their aliases"""
     with Database("feeds") as feeds, Database("aliases") as aliases_db:
@@ -301,7 +292,7 @@ def list_feeds():
                 print(name, " : %s" % url)
 
 
-@baker.command(name="export")
+@cli_base.command("export")
 def export_opml():
     """Export an OPML feed list"""
     with Database("feeds") as feeds:
@@ -315,14 +306,14 @@ def export_opml():
                 t = 'pie'
             elif kind[:3] == 'rss':
                 t = 'rss'
-            print("""\t<outline text="%s" xmlUrl="%s" type="%s" />""" %\
-                (name, feeds[name], t))
+            print("""\t<outline text="%s" xmlUrl="%s" type="%s" />""" % (name, feeds[name], t))
         print("""</body>""")
         print("""</opml>""")
         # end canto refrenced code
 
 
-@baker.command(name="import")
+@cli_base.command("import")
+@click.argument("url")
 def import_opml(url):
     """Import an OPML file locally or from a URL. Uses your text attributes as aliases."""
     # Test if URL given is local, then open, parse out feed urls,
@@ -368,7 +359,9 @@ def directory():
     return hitman_dir
 
 
-@baker.command
+@cli_base.command()
+@click.option("--force", is_flag=True, default=False)
+@click.argument("url")
 def add(url, force=False):
     """Add a atom or RSS feed by url.
     If it doesn't end in .atom or .rss we'll do some guessing."""
@@ -382,8 +375,10 @@ def add(url, force=False):
         print("Hitman doesn't think that url is a feed; if you're sure it is rerun with --force")
 
 
-@baker.command(name="set")
-def set_settings(key, value=False):
+@cli_base.command("set")
+@click.argument("value", default=False)
+@click.argument("key")
+def set_settings(key, value):
     """Set Hitman internal settings."""
     with Database("settings") as settings:
         if value in ['0', 'false', 'no', 'off', 'False']:
@@ -395,16 +390,20 @@ def set_settings(key, value=False):
             print("Setting saved")
 
 
-@baker.command(name="config")
-def get_settings(key):
+@cli_base.command("config")
+@click.argument("key", required=False)
+@click.option("--all", is_flag=True)
+def get_settings(all,key):
     """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
-        if key is "all":
-            print(s)
-        else:
+        if all:
+            for k, v in zip(list(s.keys()), list(s.values())):
+                print("{} = {}".format(k, v))
+        elif key:
             print("{} = {}".format(key, s[key]))
+        else:
+            print("Don't know what you want? Try --all")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    baker.run()
+    cli_base()

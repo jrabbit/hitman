@@ -9,6 +9,7 @@ mock = "*"
 pxml = "*"
 green = "*"
 coverage = "*"
+sphinx = "*"
 
 
 [packages]
@@ -21,3 +22,4 @@ feedparser = "==5.2.1"
 requests = "==2.18.4"
 semidbm = "==0.5.1"
 six = "*"
+click = "*"
