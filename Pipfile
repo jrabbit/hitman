@@ -11,6 +11,7 @@ green = "*"
 coverage = "*"
 sphinx = "*"
 "sphinx-click" = "*"
+"sphinx-autobuild" = "*"
 
 
 [packages]

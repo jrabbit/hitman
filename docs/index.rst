@@ -7,8 +7,9 @@ Welcome to Hitman's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: 2
+   command
    :caption: Contents:
+
 
 
 
