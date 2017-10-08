@@ -12,6 +12,8 @@ coverage = "*"
 sphinx = "*"
 "sphinx-click" = "*"
 "sphinx-autobuild" = "*"
+singledispatch = "*"
+"backports-abc" = "*"
 
 
 [packages]

@@ -1,20 +1,20 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8bed28f945046b57b06bcf74138db769b70afd03c7626bf8e4489586be16370e"
+            "sha256": "efe8f30714101aceaaf5135c5d7c12108704b746f2b0c9cb53c6123c24981e9e"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
-            "implementation_version": "3.5.4",
+            "implementation_version": "0",
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
             "platform_release": "4.12.0-2-amd64",
             "platform_system": "Linux",
             "platform_version": "#1 SMP Debian 4.12.13-1 (2017-09-19)",
-            "python_full_version": "3.5.4",
-            "python_version": "3.5",
-            "sys_platform": "linux"
+            "python_full_version": "2.7.13",
+            "python_version": "2.7",
+            "sys_platform": "linux2"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -140,6 +140,13 @@
                 "sha256:6007daf714d0cd5524bbe436e2d42b3c20e68da66289559341e48d2cd6d25811"
             ],
             "version": "==2.5.1"
+        },
+        "backports-abc": {
+            "hashes": [
+                "sha256:52089f97fe7a9aa0d3277b220c1d730a85aefd64e1b2664696fe35317c5470a7",
+                "sha256:033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"
+            ],
+            "version": "==0.5"
         },
         "backports.shutil-get-terminal-size": {
             "hashes": [
@@ -365,6 +372,13 @@
                 "sha256:9c443e7324ba5b85070c4a818ade28bfabedf16ea10206da1132edaa6dda237e"
             ],
             "version": "==2.18.4"
+        },
+        "singledispatch": {
+            "hashes": [
+                "sha256:833b46966687b3de7f438c761ac475213e53b306740f1abfaa86e1d1aae56aa8",
+                "sha256:5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c"
+            ],
+            "version": "==3.4.0.3"
         },
         "six": {
             "hashes": [
