@@ -43,7 +43,7 @@ def cli_base(ctx, verbose, debug):
 @cli_base.command("down")
 @click.argument("name")
 def put_a_hit_out(name):
-    """Download a feeds most recent enclosure that we don't have"""
+    """Download a feed's most recent enclosure that we don't have"""
 
     feed = resolve_name(name)
     if six.PY3:
