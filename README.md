@@ -8,7 +8,7 @@ The professional RSS enclosure downloader.
 +   Should run on recent python (2.7.x or 3-3.6)
 +   Lets you reference feeds based on user defined aliases [ex: "trms", "maddow"]
 +   Supports OPML.
-+   Supports various downloads methods: requests, urlgrabber (pycurl based)
++   Supports various download methods: requests, urlgrabber (pycurl based)
 +   Cross-platform folder support, progress meter for UNIX operating systems, but only works on windows if you enable Termios support.
 +   Tells you when a download is done (OSD-notify, Growl, Growl for Windows)
 +   A fun assassin theme
