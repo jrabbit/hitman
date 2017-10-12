@@ -13,7 +13,6 @@ from subprocess import Popen, PIPE
 
 
 import six
-import baker
 import click
 import feedparser
 import requests
@@ -409,4 +408,4 @@ def get_settings(all,key):
 
 
 if __name__ == "__main__":
-    cli_base()
+    cli_base() # noqa
