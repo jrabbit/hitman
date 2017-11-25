@@ -158,7 +158,7 @@ def growl(text):
                 notified = True
         if not notified:
             try:
-                logger.info("nortificatons gnome gi???")
+                logger.info("notificatons gnome gi???")
                 import gi
                 gi.require_version('Notify', '0.7')
                 from gi.repository import Notify
@@ -169,7 +169,7 @@ def growl(text):
                 Notify.uninit()
                 notified = True
             except ImportError:
-                pass
+                logger.exception()
     elif platform.system() == 'Haiku':
         os.system("notify --type information --app Hitman --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows':
@@ -178,8 +178,8 @@ def growl(text):
             toaster = ToastNotifier()
             toaster.show_toast(text, "Hitman")
             # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
-        except Exception as e:
-            logger.error(e)
+        except Exception:
+            logger.exception()
             # print("Exception")
     else:
         pass
