@@ -29,4 +29,4 @@ requests = "==2.18.4"
 semidbm = "==0.5.1"
 six = "*"
 click = "*"
-"win10toast" = "*"
+"win10toast" = {version = "*", markers = "platform_system == 'Windows'"}
