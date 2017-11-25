@@ -135,10 +135,6 @@ def hitsquad(ctx):
 def growl(text):
     """send a growl notification if on mac osx (use GNTP or the growl lib)"""
     if platform.system() == 'Darwin':
-        # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
-        # print("GNTP lib was unpublished from pypi. We're working on notification center support. Pull requests welcome.")
-        # if Popen(['which', 'growlnotify'], stdout=PIPE).communicate()[0]:
-        #     os.system("growlnotify -t Hitman -m %r" % str(text))
         import pync
         pync.Notifier.notify(text, title="Hitman")
 
@@ -178,10 +174,13 @@ def growl(text):
         os.system("notify --type information --app Hitman --title 'Status Report' '%s'" % str(text))
     elif platform.system() == 'Windows':
         try:
+            from win10toast import ToastNotifier
+            toaster = ToastNotifier()
+            toaster.show_toast(text, "Hitman")
             # gntplib.publish("Hitman", "Status Update", "Hitman", text=text)
-            print("Sorry Growl For Windows users. GNTPlib was pulled from pypi. We're not aware of compeditors to growl for windows at this time.")
-        except:
-            print("Install Growl For windows if you want notifications! \n http://www.growlforwindows.com/gfw/")
+        except Exception as e:
+            logger.error(e)
+            # print("Exception")
     else:
         pass
         # Can I test for growl for windows?

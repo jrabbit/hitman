@@ -1,7 +1,9 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
+
 
 [dev-packages]
 
@@ -10,10 +12,10 @@ pxml = "*"
 green = "*"
 coverage = "*"
 sphinx = "*"
-"sphinx-click" = "*"
-"sphinx-autobuild" = "*"
+sphinx-click = "*"
+sphinx-autobuild = "*"
 singledispatch = "*"
-"backports-abc" = "*"
+backports-abc = "*"
 
 
 [packages]
@@ -27,3 +29,4 @@ requests = "==2.18.4"
 semidbm = "==0.5.1"
 six = "*"
 click = "*"
+"win10toast" = "*"
