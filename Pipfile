@@ -30,3 +30,4 @@ semidbm = "==0.5.1"
 six = "*"
 click = "*"
 "win10toast" = {version = "*", markers = "platform_system == 'Windows'"}
+"pypiwin32" = {version = "*", platform_system = "== 'Windows'"}
