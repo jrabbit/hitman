@@ -11,6 +11,7 @@ setup(
     scripts=['hitman.py'],
     install_requires=['semidbm', 'requests', 'clint',
                       'feedparser>=5.1.3', 'beautifulsoup4>=4.3.2', 'click>=6'],
+    extras_require={'platform_system=="Windows"':["win10toast"]},
     entry_points='''
         [console_scripts]
         hitman=hitman:cli_base
@@ -18,6 +19,6 @@ setup(
     classifiers=['Environment :: Console',
                  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                  'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
-                 'Topic :: Multimedia', 'Operating System :: OS Independent', 'Programming Language :: Python :: 2 :: Only',
+                 'Topic :: Multimedia', 'Operating System :: OS Independent',
                  'Programming Language :: Python :: 2.7', ]
 )
