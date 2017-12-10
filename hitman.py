@@ -150,7 +150,7 @@ def growl(text):
             notified = True
         except ImportError:
             logger.debug("Trying notify-send")
-            print("trying to notify-send")
+            # print("trying to notify-send")
             if Popen(['which', 'notify-send'], stdout=PIPE).communicate()[0]:
                 # Do an OSD-Notify
                 # notify-send "Totem" "This is a superfluous notification"
