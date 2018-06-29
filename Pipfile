@@ -8,6 +8,7 @@ name = "pypi"
 [dev-packages]
 
 mock = "*"
+funcsigs = "*"
 pxml = "*"
 green = "*"
 coverage = "*"
