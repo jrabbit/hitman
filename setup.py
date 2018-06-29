@@ -20,5 +20,6 @@ setup(
                  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                  'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
                  'Topic :: Multimedia', 'Operating System :: OS Independent',
-                 'Programming Language :: Python :: 2.7', ]
+                 'Programming Language :: Python :: 2.7',
+                 'Programming Language :: Python :: 3.6' ]
 )
