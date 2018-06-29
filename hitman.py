@@ -24,8 +24,10 @@ logger = logging.getLogger(__name__)
 
 folder = click.get_app_dir("hitman")
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-@click.group(invoke_without_command=True)
+
+@click.group(invoke_without_command=True, context_settings=CONTEXT_SETTINGS)
 @click.pass_context
 @click.option('--debug', default=False, is_flag=True)
 @click.option('--verbose/--silent', default=True)
