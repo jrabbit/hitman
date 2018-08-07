@@ -16,6 +16,7 @@ sphinx-autobuild = "*"
 singledispatch = "*"
 backports-abc = "*"
 "backports.shutil-get-terminal-size" = "*"
+twine = "*"
 
 [packages]
 args = "==0.1.0"
