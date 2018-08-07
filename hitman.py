@@ -411,5 +411,12 @@ def get_settings(all,key):
             print("Don't know what you want? Try --all")
 
 
+@cli_base.command()
+def upgrade():
+    "Go from 1.1 dbm to 1.2 semidbm - Experimental"
+    pass
+
+
+
 if __name__ == "__main__":
     cli_base() # noqa
