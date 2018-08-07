@@ -269,7 +269,10 @@ class Database(object):
 
     def __init__(self, name):
         super(Database, self).__init__()
-        self.db = semidbm.open(os.path.join(directory(), name), 'c')
+        try:
+            self.db = semidbm.open(os.path.join(directory(), name), 'c')
+        except NotADirectoryError:
+            logger.error("Old database type encountered!")
 
     def __enter__(self):
         return self.db
