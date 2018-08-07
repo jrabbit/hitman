@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "af6e8a9d2746b632ef1ab397ed9ac76bc8784749ee9612ee44315896746ec809"
+            "sha256": "62e644fe17e1954ee59c142f88e22a9ad2ec1e3f3293fc506f2277292d9a2fc9"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -154,6 +154,14 @@
             ],
             "index": "pypi",
             "version": "==0.5"
+        },
+        "backports.shutil-get-terminal-size": {
+            "hashes": [
+                "sha256:0975ba55054c15e346944b38956a4c9cbee9009391e41b86c68990effb8c1f64",
+                "sha256:713e7a8228ae80341c70586d1cc0a8caa5207346927e23d09dcbcaf18eadec80"
+            ],
+            "index": "pypi",
+            "version": "==1.0.0"
         },
         "blessings": {
             "hashes": [

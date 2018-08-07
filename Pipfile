@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [dev-packages]
-
 mock = "*"
 funcsigs = "*"
 pxml = "*"
@@ -18,16 +15,15 @@ sphinx-click = "*"
 sphinx-autobuild = "*"
 singledispatch = "*"
 backports-abc = "*"
-
+"backports.shutil-get-terminal-size" = "*"
 
 [packages]
-
 args = "==0.1.0"
 "beautifulsoup4" = "==4.6.0"
 clint = "==0.5.1"
 feedparser = "==5.2.1"
 requests = "*"
-semidbm = "*"
+semidbm = "==0.5.1"
 six = "*"
 click = "*"
 "win10toast" = {version = "*", markers = "platform_system == 'Windows'"}
