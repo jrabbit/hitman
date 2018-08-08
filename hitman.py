@@ -135,7 +135,7 @@ def hitsquad(ctx):
 
 
 def growl(text):
-    """send a growl notification if on mac osx (use GNTP or the growl lib)"""
+    """send native notifications where supported. Growl is gone."""
     if platform.system() == 'Darwin':
         import pync
         pync.Notifier.notify(text, title="Hitman")
@@ -183,9 +183,6 @@ def growl(text):
         except Exception:
             logger.exception()
             # print("Exception")
-    else:
-        pass
-        # Can I test for growl for windows?
 
 
 def requests_get(url, dl_dir):
