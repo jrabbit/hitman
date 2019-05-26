@@ -2,7 +2,10 @@ Hitman.
 =======
 The professional RSS enclosure downloader.
 -------------------------------------------
-![build status](https://api.travis-ci.org/jrabbit/hitman.svg) ![published version](https://img.shields.io/pypi/v/hitman.svg)
+[![Build Status](https://travis-ci.org/jrabbit/hitman.svg?branch=master)](https://travis-ci.org/jrabbit/hitman)
+[![published version](https://img.shields.io/pypi/v/hitman.svg)](https://pypi.org/project/hitman/)
+[![codecov](https://codecov.io/gh/jrabbit/hitman/branch/master/graph/badge.svg)](https://codecov.io/gh/jrabbit/hitman)
+
 
 
 +   Should run on recent python (2.7.x or 3-3.6+)
