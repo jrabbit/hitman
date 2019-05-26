@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
     name='hitman',
-    version='1.2b4',
+    version='1.2b5',
     author='Jack Laxson',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
@@ -21,5 +21,5 @@ setup(
                  'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
                  'Topic :: Multimedia', 'Operating System :: OS Independent',
                  'Programming Language :: Python :: 2.7',
-                 'Programming Language :: Python :: 3.6' ]
+                 'Programming Language :: Python :: 3.7']
 )
