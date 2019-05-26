@@ -29,3 +29,4 @@ six = "*"
 click = "*"
 "win10toast" = {version = "*", markers = "platform_system == 'Windows'"}
 "pypiwin32" = {version = "*", markers = "platform_system == 'Windows'"}
+"win32" = {version = "*", markers = "platform_system == 'Windows'"}
