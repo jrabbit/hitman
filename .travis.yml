@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 python:
   - "2.7"
@@ -5,6 +6,6 @@ python:
 
 install: pip install pipenv && pipenv install --dev
 # command to run tests, e.g. python setup.py test
-script:  green -r
+script:  pipenv run green -r
 after_success:
   - bash <(curl -s https://codecov.io/bash)
