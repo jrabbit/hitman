@@ -17,7 +17,7 @@ singledispatch = "*"
 backports-abc = "*"
 "backports.shutil-get-terminal-size" = "*"
 twine = "*"
-tornado = "<6"
+tornado = "<7"
 
 [packages]
 args = "==0.1.0"
