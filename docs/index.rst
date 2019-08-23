@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Hitman's documentation!
+Hitman's documentation
 ==================================
 
 .. toctree::
@@ -11,7 +11,17 @@ Welcome to Hitman's documentation!
    :caption: Contents:
 
 
+Python 2 Support
+----------------
 
+version 2 of hitman will drop python 2 support. 3.7+ will be encouraged.
+
+
+
+License
+=======
+
+GPL v3 or later.
 
 Indices and tables
 ==================
