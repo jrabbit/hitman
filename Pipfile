@@ -19,6 +19,7 @@ backports-abc = "*"
 twine = "*"
 tornado = "<6"
 flake8 = "*"
+mypy = "*"
 
 [packages]
 args = "==0.1.0"
