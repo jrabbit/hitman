@@ -1,12 +1,12 @@
 from setuptools import setup
 setup(
     name='hitman',
-    version='1.2b5',
+    version='2',
     author='Jack Laxson',
     author_email='jackjrabbit+hitman@gmail.com',
     url='https://github.com/jrabbit/hitman',
     license='GPL v3',
-    long_description="Hitman: The professional RSS enclosure (Podcast) downloader. Supports OPML. Supports various downloads methods: requests and urlgrabber (pycurl based).",
+    long_description="Hitman: The professional RSS enclosure (Podcast) downloader. Supports OPML. Uses requests.",
     description="The professional RSS enclosure (Podcast) downloader.",
     scripts=['hitman.py'],
     install_requires=['semidbm', 'requests', 'clint', 'six',
@@ -20,6 +20,5 @@ setup(
                  'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                  'Topic :: Internet :: WWW/HTTP', 'Operating System :: BeOS',
                  'Topic :: Multimedia', 'Operating System :: OS Independent',
-                 'Programming Language :: Python :: 2.7',
                  'Programming Language :: Python :: 3.7']
 )

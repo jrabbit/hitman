@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Hitman. Or The Professional.
-# (c) 2010 - 2011, 2015 - 2017 Jack Laxson <Jrabbit>
+# (c) 2010 - 2011, 2015 - 2019 Jack Laxson <jackjrabbit+hitman@gmail.com>
 # Licensed under GPL v3 or later.
 
 import json

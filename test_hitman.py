@@ -3,7 +3,11 @@ import shutil
 import tempfile
 import unittest
 
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
+
 import pxml
 import six
 from click.testing import CliRunner
