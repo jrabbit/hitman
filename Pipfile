@@ -18,16 +18,17 @@ backports-abc = "*"
 "backports.shutil-get-terminal-size" = "*"
 twine = "*"
 tornado = "<6"
+flake8 = "*"
 
 [packages]
 args = "==0.1.0"
-"beautifulsoup4" = "==4.6.0"
+"beautifulsoup4" = "==4.8.0"
 clint = "==0.5.1"
 feedparser = "==5.2.1"
 requests = "*"
 semidbm = "==0.5.1"
 six = "*"
 click = "*"
-"win10toast" = {version = "*", markers = "platform_system == 'Windows'"}
-"pypiwin32" = {version = "*", markers = "platform_system == 'Windows'"}
-"pywin32" = {version = "*", markers = "platform_system == 'Windows'"}
+win10toast = {version = "*",markers = "platform_system == 'Windows'"}
+pypiwin32 = {version = "*",markers = "platform_system == 'Windows'"}
+pywin32 = {version = "*",markers = "platform_system == 'Windows'"}

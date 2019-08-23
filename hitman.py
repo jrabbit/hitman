@@ -323,7 +323,7 @@ def import_opml(url):
     # add feeds, set text= to aliases and report success, list feeds added
     from bs4 import BeautifulSoup
     try:
-        f = file(url).read()
+        f = open(url).read()
     except IOError:
         f = requests.get(url).text
     soup = BeautifulSoup(f, "xml")
@@ -396,7 +396,7 @@ def set_settings(key, value):
 @cli_base.command("config")
 @click.argument("key", required=False)
 @click.option("--all", is_flag=True)
-def get_settings(all,key):
+def get_settings(all, key):
     """View Hitman internal settings. Use 'all' for all keys"""
     with Database("settings") as s:
         if all:
