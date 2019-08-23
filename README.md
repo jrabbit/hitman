@@ -8,7 +8,7 @@ The professional RSS enclosure downloader.
 
 
 
-+   Should run on recent python (2.7.x or 3-3.6+)
++   Should run on recent python (3.7+)
 +   Lets you reference feeds based on user defined aliases [ex: "trms", "maddow"]
 +   Supports OPML.
 +   Tells you when a download is done (OSD-notify, send-notify, Win10 Notifications, Haiku OS, Opt-in terminal bell)
@@ -30,3 +30,5 @@ Download latest enclosures (episodes) of every feed.
 
 Import your RSS feeds (via OPML)
 `hitman.py import myfeeds.opml`
+
+[Full docs at rtd.](https://hitman.readthedocs.io/en/latest/)
