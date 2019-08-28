@@ -4,20 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [dev-packages]
-mock = "*"
-funcsigs = "*"
 pxml = "*"
 green = "*"
 coverage = "*"
 colorama="*"
-sphinx = "<2"
 sphinx-click = "*"
 sphinx-autobuild = "*"
-singledispatch = "*"
-backports-abc = "*"
-"backports.shutil-get-terminal-size" = "*"
 twine = "*"
-tornado = "<6"
 flake8 = "*"
 mypy = "*"
 
