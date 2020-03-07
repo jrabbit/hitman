@@ -2,14 +2,9 @@ import os
 import shutil
 import tempfile
 import unittest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 import pxml
-import six
 from click.testing import CliRunner
 from hitman import Database, export_opml, requests_get
 
