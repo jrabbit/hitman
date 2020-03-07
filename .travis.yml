@@ -2,9 +2,9 @@ dist: xenial
 language: python
 python:
   - "3.7"
+  - "3.8"
 
-install: pip install pipenv && pipenv install --dev
-# command to run tests, e.g. python setup.py test
-script:  pipenv run green -r
+install: pip install poetry && poetry install -v
+script: poetry run green -r
 after_success:
   - bash <(curl -s https://codecov.io/bash)
