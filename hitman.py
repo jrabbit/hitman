@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Hitman. Or The Professional.
-# (c) 2010 - 2011, 2015 - 2019 Jack Laxson <jackjrabbit+hitman@gmail.com>
+# (c) 2010 - 2011, 2015 - 2020 Jack Laxson <jackjrabbit+hitman@gmail.com>
 # Licensed under GPL v3 or later.
 
 import json
@@ -12,7 +12,6 @@ import time
 from subprocess import Popen, PIPE
 
 
-import six
 import click
 import feedparser
 import requests
@@ -40,15 +39,17 @@ def cli_base(ctx, verbose, debug):
     if ctx.invoked_subcommand is None:
         hitsquad(ctx)
 
+@cli_base.command("help")
+@click.pass_context
+def help2(ctx):
+    print(ctx.show_help())
 
 @cli_base.command("down")
 @click.argument("name")
 def put_a_hit_out(name):
     """Download a feed's most recent enclosure that we don't have"""
 
-    feed = resolve_name(name)
-    if six.PY3:
-        feed = feed.decode()
+    feed = resolve_name(name).decode()
     d = feedparser.parse(feed)
     # logger.info(d)
     # logger.info(feed)
@@ -84,11 +85,8 @@ def put_a_hit_out(name):
 @click.argument("name")
 def selective_download(name, oldest, newest):
     """Note: RSS feeds are counted backwards, default newest is 0, the most recent."""
-    if six.PY3:
-        name = name.encode("utf-8")
-    feed = resolve_name(name)
-    if six.PY3:
-        feed = feed.decode()
+    name = name.encode("utf-8")
+    feed = resolve_name(name).decode()
     d = feedparser.parse(feed)
     logger.debug(d)
     try:
