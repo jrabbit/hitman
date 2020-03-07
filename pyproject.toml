@@ -2,8 +2,20 @@
 name = "hitman"
 version = "2.1.0"
 description = "The professional RSS enclosure (Podcast) downloader."
+repository = "https://github.com/jrabbit/hitman"
+documentation = "https://hitman.readthedocs.io/en/latest/"
 authors = ["Jack Laxson <jackjrabbit+hitman@gmail.com>"]
-license = "GPL-3.0"
+license = "GPL-3.0+"
+classifiers = [
+    'Topic :: Multimedia',
+    'Operating System :: OS Independent',
+    'Topic :: Internet :: WWW/HTTP',
+    'Operating System :: BeOS',
+    'Environment :: Console',
+]
+
+[tool.poetry.scripts]
+hitman = "hitman:cli_base"
 
 [tool.poetry.dependencies]
 python = "^3.6"
