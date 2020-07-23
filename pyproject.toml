@@ -27,7 +27,7 @@ beautifulsoup4 = "^4.8.2"
 semidbm = "^0.5.1"
 
 [tool.poetry.dev-dependencies]
-sphinx-click = "^2.3.1"
+sphinx-click = "^2.5.0"
 coverage = "^5.0.3"
 sphinx-autobuild = "^0.7.1"
 pxml = "^0.2.13"
