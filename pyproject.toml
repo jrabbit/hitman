@@ -23,7 +23,7 @@ requests = "^2.23.0"
 click = "^7.0"
 clint = "^0.5.1"
 feedparser = "^5.2.1"
-beautifulsoup4 = "^4.8.2"
+beautifulsoup4 = "^4.9.2"
 semidbm = "^0.5.1"
 
 [tool.poetry.dev-dependencies]
