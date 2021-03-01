@@ -28,7 +28,7 @@ semidbm = "^0.5.1"
 
 [tool.poetry.dev-dependencies]
 sphinx-click = "^2.3.1"
-coverage = "^5.0.3"
+coverage = "^5.5"
 sphinx-autobuild = "^0.7.1"
 pxml = "^0.2.13"
 green = "^3.1.0"
