@@ -33,7 +33,7 @@ sphinx-autobuild = "^0.7.1"
 pxml = "^0.2.13"
 green = "^3.1.0"
 mypy = "^0.761"
-flake8 = "^3.7.9"
+flake8 = "^3.9.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
