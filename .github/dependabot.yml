@@ -1,0 +1,33 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: sphinx-click
+    versions:
+    - 2.5.0
+    - 2.6.0
+    - 2.7.0
+  - dependency-name: flake8
+    versions:
+    - 3.8.4
+    - 3.9.0
+  - dependency-name: coverage
+    versions:
+    - "5.4"
+  - dependency-name: mypy
+    versions:
+    - "0.800"
+  - dependency-name: lxml
+    versions:
+    - 4.6.2
+  - dependency-name: green
+    versions:
+    - 3.2.5
+  - dependency-name: sphinx-autobuild
+    versions:
+    - 2020.9.1
