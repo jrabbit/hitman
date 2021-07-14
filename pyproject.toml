@@ -19,7 +19,7 @@ hitman = "hitman:cli_base"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-requests = "^2.23.0"
+requests = "^2.26.0"
 click = "^7.0"
 clint = "^0.5.1"
 feedparser = "^5.2.1"
